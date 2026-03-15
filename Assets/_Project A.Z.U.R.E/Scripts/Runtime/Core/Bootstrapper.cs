@@ -7,7 +7,7 @@ public class Bootstrapper : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Debug.Log("[Bootstrap] Starting...");
     }
 
     // Update is called once per frame
