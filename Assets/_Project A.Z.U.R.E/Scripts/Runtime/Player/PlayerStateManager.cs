@@ -1,18 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+
+public enum PlayerState
+{
+    Idle,
+    Running,
+    Jumping,
+    Falling,
+    Landing,
+    DoubleJumping,
+    // Dashing,       // Phase 2
+    // WallSliding,   // Phase 2
+    // Attacking,     // Phase 3
+
+
+}
 
 public class PlayerStateManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public PlayerState CurrentState { get; private set; } = PlayerState.Idle;
+    public PlayerState PreviousState { get; private set; }
+
+    public event System.Action<PlayerState, PlayerState> OnStateChanged;
+
+    public void ChangeState(PlayerState newState)
     {
-        
+        if (newState == CurrentState) return;
+        PreviousState = CurrentState;
+        CurrentState = newState;
+        Debug.Log($"[PSM] Firing OnStateChanged: {PreviousState} → {CurrentState} · Subscribers: {OnStateChanged?.GetInvocationList().Length ?? 0}");
+        OnStateChanged?.Invoke(PreviousState, CurrentState);
+        Debug.Log($"[State] {PreviousState} → {CurrentState}");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public bool IsGrounded =>
+        CurrentState == PlayerState.Idle ||
+        CurrentState == PlayerState.Running ||
+        CurrentState == PlayerState.Landing;
+
+    public bool IsAirborne =>
+        CurrentState == PlayerState.Jumping ||
+        CurrentState == PlayerState.Falling;
 }

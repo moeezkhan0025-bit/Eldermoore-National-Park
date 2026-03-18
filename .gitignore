@@ -24,4 +24,4 @@
 /[Aa]ssets/[Aa]ssetStoreTools*
 .vsconfig
 .vscode/
-.idea/
+.idea/.vs/

@@ -1,18 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ParallaxController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    ParallaxLayer[] layers;
+    Vector3 previousCamPos;
+
     void Start()
     {
-        
+        layers = GetComponentsInChildren<ParallaxLayer>();
+        previousCamPos = Camera.main.transform.position;
+
+        if (layers.Length == 0)
+            Debug.LogWarning("[ParallaxController] No ParallaxLayer components found in children!");
+        else
+            Debug.Log($"[ParallaxController] Found {layers.Length} parallax layers.");
     }
 
-    // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        
+        if (Camera.main == null) return;
+
+        Vector3 delta = Camera.main.transform.position - previousCamPos;
+
+        foreach (var layer in layers)
+            layer.Move(delta);
+
+        previousCamPos = Camera.main.transform.position;
     }
 }
