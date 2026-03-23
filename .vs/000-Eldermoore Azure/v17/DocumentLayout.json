@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\moeez\\000-Eldermoore Azure\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\moeez\\000-Eldermoore Azure\\Library\\PackageCache\\com.unity.2d.psdimporter@8.1.0\\Editor\\ImportUtilites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Library\\PackageCache\\com.unity.2d.psdimporter@8.1.0\\Editor\\ImportUtilites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|c:\\users\\moeez\\000-eldermoore azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\movementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|solutionrelative:assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\movementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -43,19 +47,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ImportUtilites.cs",
+              "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Library\\PackageCache\\com.unity.2d.psdimporter@8.1.0\\Editor\\ImportUtilites.cs",
+              "RelativeDocumentMoniker": "Library\\PackageCache\\com.unity.2d.psdimporter@8.1.0\\Editor\\ImportUtilites.cs",
+              "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Library\\PackageCache\\com.unity.2d.psdimporter@8.1.0\\Editor\\ImportUtilites.cs",
+              "RelativeToolTip": "Library\\PackageCache\\com.unity.2d.psdimporter@8.1.0\\Editor\\ImportUtilites.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAuwKUAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T03:33:30.476Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "MovementController.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\MovementController.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\MovementController.cs",
               "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\MovementController.cs",
               "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\MovementController.cs",
-              "ViewState": "AgIAAD4AAAAAAAAAAAAmwFUAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAD4AAAAAAAAAAAA6wFUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-16T02:18:06.714Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "PlayerAnimationController.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerAnimationController.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerAnimationController.cs",
@@ -63,12 +80,11 @@
               "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerAnimationController.cs",
               "ViewState": "AgIAABkAAAAAAAAAAAAQwEUAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-16T02:21:54.867Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-16T02:21:54.867Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "PlayerStateManager.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
@@ -76,12 +92,11 @@
               "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-16T02:20:49.98Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-16T02:20:49.98Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "PlayerInputHandler.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
@@ -89,12 +104,11 @@
               "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAAkAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-16T02:21:33.694Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-16T02:21:33.694Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "ParallaxController.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Camera\\ParallaxController.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Camera\\ParallaxController.cs",
@@ -106,7 +120,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "ParrallaxLayer.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Camera\\ParrallaxLayer.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Camera\\ParrallaxLayer.cs",
@@ -118,7 +132,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "InfiniteGround.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\World\\InfiniteGround.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\World\\InfiniteGround.cs",

@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\moeez\\000-Eldermoore Azure\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|C:\\Users\\moeez\\000-Eldermoore Azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\movementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|c:\\users\\moeez\\000-eldermoore azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\movementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|solutionrelative:assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\movementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|C:\\Users\\moeez\\000-Eldermoore Azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playerinputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|solutionrelative:assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playerinputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|C:\\Users\\moeez\\000-Eldermoore Azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playeranimationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|solutionrelative:assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playeranimationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|c:\\users\\moeez\\000-eldermoore azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playerstatemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|C:\\Users\\moeez\\000-Eldermoore Azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playerstatemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|solutionrelative:assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playerstatemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|C:\\Users\\moeez\\000-Eldermoore Azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playerinputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|solutionrelative:assets\\_project a.z.u.r.e\\scripts\\runtime\\player\\playerinputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{58344FFC-BACE-1253-5329-8B99BB28FD7A}|Assembly-CSharp.csproj|C:\\Users\\moeez\\000-Eldermoore Azure\\assets\\_project a.z.u.r.e\\scripts\\runtime\\camera\\parallaxcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -48,22 +48,48 @@
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\MovementController.cs",
               "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\MovementController.cs",
               "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\MovementController.cs",
-              "ViewState": "AgIAADUAAAAAAAAAAAAswEsAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAmwFUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-16T02:18:06.714Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "PlayerAnimationController.cs",
               "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerAnimationController.cs",
               "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerAnimationController.cs",
               "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerAnimationController.cs",
               "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerAnimationController.cs",
-              "ViewState": "AgIAADMAAAAAAAAAAAA7wB0AAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAABkAAAAAAAAAAAAQwEUAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-16T02:21:54.867Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PlayerStateManager.cs",
+              "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
+              "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
+              "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
+              "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T02:20:49.98Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PlayerInputHandler.cs",
+              "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
+              "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
+              "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
+              "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAkAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T02:21:33.694Z",
               "EditorCaption": ""
             },
             {
@@ -77,31 +103,6 @@
               "ViewState": "AgIAAAUAAAAAAAAAAAAAwB0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-16T01:15:29.658Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "PlayerStateManager.cs",
-              "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
-              "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
-              "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
-              "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerStateManager.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAkwBoAAACVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-16T02:20:49.98Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "PlayerInputHandler.cs",
-              "DocumentMoniker": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
-              "RelativeDocumentMoniker": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
-              "ToolTip": "C:\\Users\\moeez\\000-Eldermoore Azure\\Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
-              "RelativeToolTip": "Assets\\_Project A.Z.U.R.E\\Scripts\\Runtime\\Player\\PlayerInputHandler.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-16T02:21:33.694Z"
             },
             {
               "$type": "Document",
