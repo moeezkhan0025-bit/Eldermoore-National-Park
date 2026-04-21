@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Playables;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -18,45 +19,70 @@ public class MovementController : MonoBehaviour
 
     [Header("Double Jump")]
     [SerializeField] float doubleJumpForce = 12f;
-    [SerializeField] int maxJumpCount = 2;    // 2 = double jump, 3 = triple etc
+    [SerializeField] int maxJumpCount = 2;
     int currentJumpCount;
     float doubleJumpBufferTimer;
+
+    [Header("Wall Slide")]
+    [SerializeField] float wallSlideSpeed = 1.5f;
+
+    [Header("Wall Jump")]
+    [SerializeField] float wallJumpForceY = 14f;
+
+    [Header("Drop Through")]
+    [SerializeField] string platformLayer = "OneWayPlatform";
+    [SerializeField] float dropCooldown = 0.4f;
 
     [Header("Check Colliders")]
     [SerializeField] Collider2D groundCheck;
     [SerializeField] Collider2D leftWallCheck;
     [SerializeField] Collider2D rightWallCheck;
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] LayerMask wallLayer;
 
     [Header("Visual")]
     [SerializeField] Transform spriteChild;
-    // Drag the Sprite child object here — we flip this, not the root
 
     Rigidbody2D rb;
     PlayerStateManager psm;
     PlayerInputHandler input;
 
-    // ── Public read-only state for other systems ──
     public bool IsGrounded { get; private set; }
     public bool IsTouchingLeft { get; private set; }
     public bool IsTouchingRight { get; private set; }
     public bool FacingRight { get; private set; } = true;
+    public bool IsWallSliding { get; private set; }
 
     float coyoteTimer;
     float jumpBufferTimer;
+    int wallDirection;
+
+    bool isDropping = false;
+    int platformLayerIndex;
+    int playerLayerIndex;
+    ContactFilter2D platformFilter;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         psm = GetComponent<PlayerStateManager>();
         input = GetComponent<PlayerInputHandler>();
+
+        platformLayerIndex = LayerMask.NameToLayer(platformLayer);
+        playerLayerIndex = gameObject.layer;
+
+        platformFilter = new ContactFilter2D();
+        platformFilter.SetLayerMask(LayerMask.GetMask(platformLayer));
+        platformFilter.useTriggers = true;
     }
 
     void Update()
     {
         UpdateChecks();
         UpdateTimers();
+        UpdateWallSlide();
         HandleJumpBuffer();
+        HandleDropThrough();
         UpdateState();
     }
 
@@ -66,27 +92,67 @@ public class MovementController : MonoBehaviour
         ApplyBetterGravity();
     }
 
-    // ── Check all three colliders ─────────────────
     void UpdateChecks()
     {
         bool wasGrounded = IsGrounded;
 
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.SetLayerMask(groundLayer);
-        filter.useTriggers = true;
+        ContactFilter2D groundFilter = new ContactFilter2D();
+        groundFilter.SetLayerMask(groundLayer);
+        groundFilter.useTriggers = true;
 
-        IsGrounded = groundCheck.IsTouching(filter);
-        IsTouchingLeft = leftWallCheck.IsTouching(filter);
-        IsTouchingRight = rightWallCheck.IsTouching(filter);
+        ContactFilter2D wallFilter = new ContactFilter2D();
+        wallFilter.SetLayerMask(wallLayer);
+        wallFilter.useTriggers = true;
+
+        IsGrounded = groundCheck.IsTouching(groundFilter);
+        IsTouchingLeft = leftWallCheck.IsTouching(wallFilter);
+        IsTouchingRight = rightWallCheck.IsTouching(wallFilter);
+
+        if (IsTouchingLeft) wallDirection = -1;
+        else if (IsTouchingRight) wallDirection = 1;
+        else wallDirection = 0;
 
         if (IsGrounded)
         {
             coyoteTimer = coyoteTime;
-            currentJumpCount = 0; // reset fully on landing
+            currentJumpCount = 0;
         }
 
         if (!wasGrounded && IsGrounded)
             psm.ChangeState(PlayerState.Landing);
+    }
+
+    void HandleDropThrough()
+    {
+        if (input.DropPressed && !isDropping && IsOnPlatform())
+            StartCoroutine(DropThrough());
+    }
+
+    bool IsOnPlatform()
+    {
+        return groundCheck.IsTouching(platformFilter);
+    }
+
+    IEnumerator DropThrough()
+    {
+        isDropping = true;
+
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask(platformLayer));
+        filter.useTriggers = true;
+
+        Collider2D[] results = new Collider2D[5];
+        int count = groundCheck.OverlapCollider(filter, results);
+
+        for (int i = 0; i < count; i++)
+            results[i].enabled = false;
+
+        yield return new WaitForSeconds(dropCooldown);
+
+        for (int i = 0; i < count; i++)
+            results[i].enabled = true;
+
+        isDropping = false;
     }
 
     void UpdateTimers()
@@ -96,16 +162,40 @@ public class MovementController : MonoBehaviour
         doubleJumpBufferTimer -= Time.deltaTime;
     }
 
+    void UpdateWallSlide()
+    {
+        bool touchingWall = IsTouchingLeft || IsTouchingRight;
+        bool holdingTowardWall = (IsTouchingLeft && input.MoveInput < -0.01f) ||
+                                 (IsTouchingRight && input.MoveInput > 0.01f);
+
+        IsWallSliding = touchingWall &&
+                        !IsGrounded &&
+                        holdingTowardWall &&
+                        rb.velocity.y < 0f;
+
+        if (IsWallSliding && psm.CurrentState != PlayerState.WallSliding)
+            psm.ChangeState(PlayerState.WallSliding);
+
+        if (!IsWallSliding && psm.CurrentState == PlayerState.WallSliding)
+            psm.ChangeState(PlayerState.Falling);
+    }
+
     void HandleJumpBuffer()
     {
         if (input.JumpPressed)
         {
             jumpBufferTimer = jumpBufferTime;
             doubleJumpBufferTimer = jumpBufferTime;
-            Debug.Log($"[Jump] Pressed · Count:{currentJumpCount}/{maxJumpCount} · IsAirborne:{psm.IsAirborne}");
         }
 
-        // First jump — from ground with coyote time
+        if (jumpBufferTimer > 0f && IsWallSliding)
+        {
+            ExecuteWallJump();
+            jumpBufferTimer = 0f;
+            doubleJumpBufferTimer = 0f;
+            return;
+        }
+
         if (jumpBufferTimer > 0f && coyoteTimer > 0f)
         {
             ExecuteJump();
@@ -114,9 +204,9 @@ public class MovementController : MonoBehaviour
             return;
         }
 
-        // Additional jumps — counter check
         if (doubleJumpBufferTimer > 0f &&
             psm.IsAirborne &&
+            !IsWallSliding &&
             currentJumpCount < maxJumpCount)
         {
             ExecuteDoubleJump();
@@ -127,8 +217,7 @@ public class MovementController : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         coyoteTimer = 0f;
-        jumpBufferTimer = 0f;
-        currentJumpCount = 1; // first jump used
+        currentJumpCount = 1;
         psm.ChangeState(PlayerState.Jumping);
     }
 
@@ -136,22 +225,27 @@ public class MovementController : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, doubleJumpForce);
         doubleJumpBufferTimer = 0f;
-        currentJumpCount++;   // increment counter
+        currentJumpCount++;
         psm.ChangeState(PlayerState.DoubleJumping);
+    }
+
+    void ExecuteWallJump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, wallJumpForceY);
+        currentJumpCount = 1;
+        psm.ChangeState(PlayerState.WallJumping);
     }
 
     void HandleMovement()
     {
-        float target = input.MoveInput * moveSpeed;
-        float rate = Mathf.Abs(input.MoveInput) > 0.01f
-                       ? acceleration : deceleration;
-        float newX = Mathf.MoveTowards(
-            rb.velocity.x, target, rate * Time.fixedDeltaTime);
+        float moveInput = input.MoveInput;
+        float target = moveInput * moveSpeed;
+        float rate = Mathf.Abs(moveInput) > 0.01f ? acceleration : deceleration;
+        float newX = Mathf.MoveTowards(rb.velocity.x, target, rate * Time.fixedDeltaTime);
         rb.velocity = new Vector2(newX, rb.velocity.y);
         HandleFlip();
     }
 
-    // ── Flip the Sprite CHILD — not the root ─────
     void HandleFlip()
     {
         if (input.MoveInput > 0f && !FacingRight) Flip();
@@ -161,20 +255,28 @@ public class MovementController : MonoBehaviour
     void Flip()
     {
         FacingRight = !FacingRight;
-        // Only flip the sprite child — colliders stay correct
         Vector3 s = spriteChild.localScale;
         spriteChild.localScale = new Vector3(-s.x, s.y, s.z);
     }
 
     void ApplyBetterGravity()
     {
+        if (IsWallSliding)
+        {
+            rb.velocity = new Vector2(
+                rb.velocity.x,
+                Mathf.Max(rb.velocity.y, -wallSlideSpeed)
+            );
+            return;
+        }
+
         if (rb.velocity.y < 0f)
             rb.velocity += Vector2.up * Physics2D.gravity.y
                 * (fallMultiplier - 1f) * Time.fixedDeltaTime;
+
         else if (rb.velocity.y > 0f && !input.JumpHeld)
             rb.velocity += Vector2.up * Physics2D.gravity.y
                 * (lowJumpMultiplier - 1f) * Time.fixedDeltaTime;
-        // PHASE 2: wall slide gravity override goes here
     }
 
     void UpdateState()
@@ -186,6 +288,7 @@ public class MovementController : MonoBehaviour
                     psm.ChangeState(Mathf.Abs(input.MoveInput) > 0.01f
                         ? PlayerState.Running : PlayerState.Idle);
                 break;
+
             case PlayerState.Idle:
             case PlayerState.Running:
                 if (!IsGrounded && coyoteTimer <= 0f)
@@ -194,18 +297,41 @@ public class MovementController : MonoBehaviour
                     psm.ChangeState(Mathf.Abs(input.MoveInput) > 0.01f
                         ? PlayerState.Running : PlayerState.Idle);
                 break;
+
             case PlayerState.Jumping:
-                // Only go to Falling when actually moving downward
-                if (rb.velocity.y < -0.1f)
+                if (IsWallSliding)
+                    psm.ChangeState(PlayerState.WallSliding);
+                else if (rb.velocity.y < -0.1f)
                     psm.ChangeState(PlayerState.Falling);
-                break;
-            case PlayerState.Falling:
-                if (IsGrounded)
-                    psm.ChangeState(PlayerState.Landing);
                 break;
 
             case PlayerState.DoubleJumping:
-                if (rb.velocity.y < -0.1f)
+                if (IsWallSliding)
+                    psm.ChangeState(PlayerState.WallSliding);
+                else if (rb.velocity.y < -0.1f)
+                    psm.ChangeState(PlayerState.Falling);
+                break;
+
+            case PlayerState.Falling:
+                if (IsGrounded)
+                    psm.ChangeState(PlayerState.Landing);
+                else if (IsWallSliding)
+                    psm.ChangeState(PlayerState.WallSliding);
+                break;
+
+            case PlayerState.WallSliding:
+                if (IsGrounded)
+                    psm.ChangeState(PlayerState.Landing);
+                else if (!IsWallSliding)
+                    psm.ChangeState(PlayerState.Falling);
+                break;
+
+            case PlayerState.WallJumping:
+                if (IsWallSliding)
+                    psm.ChangeState(PlayerState.WallSliding);
+                else if (IsGrounded)
+                    psm.ChangeState(PlayerState.Landing);
+                else if (rb.velocity.y < -0.1f)
                     psm.ChangeState(PlayerState.Falling);
                 break;
         }

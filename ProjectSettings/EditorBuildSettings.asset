@@ -15,9 +15,15 @@ EditorBuildSettings:
     path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/MainMenu.unity
     guid: 5d9938aedb58841478e82b5b9cf49b3f
   - enabled: 1
+    path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/SaveFileSelect.unity
+    guid: 3f70fb5635ac79a40915e4893001e95c
+  - enabled: 1
     path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/CharacterSelect.unity
     guid: 8d87ee34c8857a74b806a416b961da9d
   - enabled: 1
     path: Assets/_Project A.Z.U.R.E/Scenes/Test/Demo_Showcase.unity
     guid: f50d593921723a548b5257cfcc6d73c6
+  - enabled: 1
+    path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/Settings.unity
+    guid: 1bcf7e11c7267404d8079dc8dfb89652
   m_configObjects: {}

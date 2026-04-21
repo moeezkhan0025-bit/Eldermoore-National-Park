@@ -8,11 +8,10 @@ public enum PlayerState
     Falling,
     Landing,
     DoubleJumping,
-    // Dashing,       // Phase 2
-    // WallSliding,   // Phase 2
-    // Attacking,     // Phase 3
-
-
+    WallSliding,   // Phase 2 — unlocked
+    WallJumping,   // Phase 2 — unlocked
+    // Dashing,    // Phase 2 — pending
+    // Attacking,  // Phase 3 — pending
 }
 
 public class PlayerStateManager : MonoBehaviour
@@ -25,8 +24,10 @@ public class PlayerStateManager : MonoBehaviour
     public void ChangeState(PlayerState newState)
     {
         if (newState == CurrentState) return;
+
         PreviousState = CurrentState;
         CurrentState = newState;
+
         Debug.Log($"[PSM] Firing OnStateChanged: {PreviousState} → {CurrentState} · Subscribers: {OnStateChanged?.GetInvocationList().Length ?? 0}");
         OnStateChanged?.Invoke(PreviousState, CurrentState);
         Debug.Log($"[State] {PreviousState} → {CurrentState}");
@@ -39,5 +40,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public bool IsAirborne =>
         CurrentState == PlayerState.Jumping ||
-        CurrentState == PlayerState.Falling;
+        CurrentState == PlayerState.Falling ||
+        CurrentState == PlayerState.DoubleJumping ||
+        CurrentState == PlayerState.WallSliding ||
+        CurrentState == PlayerState.WallJumping;
 }
