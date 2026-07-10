@@ -9,21 +9,18 @@ EditorBuildSettings:
     path: Assets/_Project A.Z.U.R.E/Scenes/Bootstrap/Bootstrap.unity
     guid: cf81eb367f70187478c356704dea90f8
   - enabled: 1
-    path: Assets/_Project A.Z.U.R.E/Scenes/Persistent/PersistentSystems.unity
-    guid: 06e2a2c7bce7f654c9e584ba6bb0545c
-  - enabled: 1
-    path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/MainMenu.unity
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/MainMenu.unity
     guid: 5d9938aedb58841478e82b5b9cf49b3f
   - enabled: 1
-    path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/SaveFileSelect.unity
-    guid: 3f70fb5635ac79a40915e4893001e95c
-  - enabled: 1
-    path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/CharacterSelect.unity
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/CharacterSelect.unity
     guid: 8d87ee34c8857a74b806a416b961da9d
   - enabled: 1
-    path: Assets/_Project A.Z.U.R.E/Scenes/Test/Demo_Showcase.unity
-    guid: f50d593921723a548b5257cfcc6d73c6
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/IntroCutscene.unity
+    guid: bb836f18612af5245b363983cf9a1725
   - enabled: 1
-    path: Assets/_Project A.Z.U.R.E/Scenes/Frontend/Settings.unity
-    guid: 1bcf7e11c7267404d8079dc8dfb89652
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/RangerHQ.unity
+    guid: 8c5ee7f897c761b49a51923b96b5545b
+  - enabled: 1
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/Game.unity
+    guid: 0b3ffbde032f5d4449e1d637171faf3e
   m_configObjects: {}
