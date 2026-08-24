@@ -41,6 +41,29 @@ public class MovementController : MonoBehaviour
     float wallJumpLockTimer;
     float jumpCutoffTimer;
 
+    [Header("Climb")]
+    [SerializeField] float climbSpeed = 5f;
+    [SerializeField] float climbHorizontalFactor = 0.5f; // sideways freedom on a climb surface (0 = pure vertical)
+    [SerializeField] LayerMask climbableLayer;
+    bool isClimbing;
+    public bool IsTouchingClimbable { get; private set; }
+    public bool IsClimbing => isClimbing;
+
+    [Header("Warp (charged blink)")]
+    [SerializeField] int maxWarpCharges = 2;
+    [SerializeField] float warpDistance = 4f;
+    [SerializeField] float warpCooldown = 0.25f;     // min time between warps
+    [SerializeField] float warpRechargeTime = 2f;    // seconds to regen one charge
+    [SerializeField] bool refillOnLanding = true;    // grounded refills all charges
+    [SerializeField] float warpLockTime = 0.06f;     // brief input lock after a blink
+    [SerializeField] float warpSkin = 0.1f;          // gap kept from walls when clamped
+    [SerializeField] LayerMask warpObstacleLayer;    // set to Ground + Wall layers
+    int currentWarpCharges;
+    float warpCooldownTimer;
+    float warpRechargeTimer;
+    float warpLockTimer;
+    public int WarpCharges => currentWarpCharges;    // handy for a future UI
+
     [Header("Drop Through")]
     [SerializeField] string platformLayer = "OneWayPlatform";
     [SerializeField] float dropCooldown = 0.4f;
@@ -102,6 +125,9 @@ public class MovementController : MonoBehaviour
         platformFilter = new ContactFilter2D();
         platformFilter.SetLayerMask(LayerMask.GetMask(platformLayer));
         platformFilter.useTriggers = true;
+
+        currentWarpCharges = maxWarpCharges;
+        warpRechargeTimer = warpRechargeTime;
     }
 
     void Update()
@@ -110,6 +136,14 @@ public class MovementController : MonoBehaviour
 
         UpdateChecks();
         UpdateTimers();
+
+        // Climb takes priority over normal movement.
+        HandleClimb();
+        if (isClimbing) { UpdateState(); return; }
+
+        // Warp is an instant action; may reposition the player this frame.
+        HandleWarp();
+
         UpdateWallSlide();
         HandleJumpBuffer();
         HandleDropThrough();
@@ -119,6 +153,8 @@ public class MovementController : MonoBehaviour
     void FixedUpdate()
     {
         if (!setupValid) return;
+
+        if (isClimbing) { HandleClimbMovement(); return; }
 
         HandleMovement();
         ApplyBetterGravity();
@@ -136,6 +172,7 @@ public class MovementController : MonoBehaviour
         IsGrounded = groundCheck.IsTouching(groundFilter);
         IsTouchingLeft = leftWallCheck.IsTouching(wallFilter);
         IsTouchingRight = rightWallCheck.IsTouching(wallFilter);
+        IsTouchingClimbable = rb.IsTouchingLayers(climbableLayer);
         if (IsTouchingLeft) wallDirection = -1;
         else if (IsTouchingRight) wallDirection = 1;
         else wallDirection = 0;
@@ -143,23 +180,10 @@ public class MovementController : MonoBehaviour
         {
             coyoteTimer = coyoteTime;
             currentJumpCount = 0;
+            if (refillOnLanding) currentWarpCharges = maxWarpCharges;
         }
         if (!wasGrounded && IsGrounded)
             psm.ChangeState(PlayerState.Landing);
-
-        // --- TEMPORARY DIAGNOSTIC: names what the ground check is touching ---
-        if (IsGrounded)
-        {
-            Collider2D[] hits = new Collider2D[10];
-            ContactFilter2D dbg = new ContactFilter2D();
-            dbg.SetLayerMask(groundLayer);
-            dbg.useTriggers = true;
-            int n = groundCheck.OverlapCollider(dbg, hits);
-            //string s = "";
-            //for (int i = 0; i < n; i++)
-                //s += $"{hits[i].name} [layer:{LayerMask.LayerToName(hits[i].gameObject.layer)}, trigger:{hits[i].isTrigger}]  ";
-            //Debug.Log($"GROUND HIT x{n}: {s}");
-        }
     }
 
     void HandleDropThrough()
@@ -191,7 +215,84 @@ public class MovementController : MonoBehaviour
         doubleJumpBufferTimer -= Time.deltaTime;
         wallJumpLockTimer -= Time.deltaTime;
         jumpCutoffTimer -= Time.deltaTime;
+        warpCooldownTimer -= Time.deltaTime;
+        warpLockTimer -= Time.deltaTime;
+
+        // Regenerate one warp charge over time.
+        if (currentWarpCharges < maxWarpCharges)
+        {
+            warpRechargeTimer -= Time.deltaTime;
+            if (warpRechargeTimer <= 0f)
+            {
+                currentWarpCharges++;
+                warpRechargeTimer = warpRechargeTime;
+            }
+        }
+        else warpRechargeTimer = warpRechargeTime;
     }
+
+    // ---------------- CLIMB ----------------
+
+    void HandleClimb()
+    {
+        // Grab on: touching a climbable surface, off the ground, and pressing up/down or grab.
+        if (!isClimbing && IsTouchingClimbable && !IsGrounded &&
+            (Mathf.Abs(input.VerticalInput) > 0.01f || input.GrabHeld))
+        {
+            isClimbing = true;
+            currentJumpCount = 0;                 // refresh jumps when you grab on
+            psm.ChangeState(PlayerState.Climbing);
+        }
+
+        if (!isClimbing) return;
+
+        // Let go: off the surface or back on the ground.
+        if (!IsTouchingClimbable || IsGrounded) { isClimbing = false; return; }
+
+        // Jump off the surface.
+        if (input.JumpPressed) { isClimbing = false; ExecuteJump(); }
+    }
+
+    void HandleClimbMovement()
+    {
+        rb.gravityScale = 0f;                      // no gravity while gripping
+        float v = input.VerticalInput;
+        float h = input.MoveInput;
+        rb.velocity = new Vector2(h * climbSpeed * climbHorizontalFactor, v * climbSpeed);
+        HandleFlip();
+    }
+
+    // ---------------- WARP ----------------
+
+    void HandleWarp()
+    {
+        if (!input.WarpPressed) return;
+        if (currentWarpCharges <= 0 || warpCooldownTimer > 0f) return;
+        ExecuteWarp();
+    }
+
+    void ExecuteWarp()
+    {
+        // Direction from movement input; fall back to facing when neutral.
+        Vector2 dir = new Vector2(input.MoveInput, input.VerticalInput);
+        if (dir.sqrMagnitude < 0.01f) dir = new Vector2(FacingRight ? 1f : -1f, 0f);
+        dir.Normalize();
+
+        // Clamp against obstacles so we don't blink inside geometry.
+        float dist = warpDistance;
+        RaycastHit2D hit = Physics2D.Raycast(rb.position, dir, warpDistance, warpObstacleLayer);
+        if (hit.collider != null) dist = Mathf.Max(0f, hit.distance - warpSkin);
+
+        rb.position = rb.position + dir * dist;
+        rb.velocity = Vector2.zero;
+
+        currentWarpCharges--;
+        warpCooldownTimer = warpCooldown;
+        warpLockTimer = warpLockTime;
+        psm.ChangeState(PlayerState.Warping);
+    }
+
+    // ---------------- CORE MOVEMENT ----------------
 
     void UpdateWallSlide()
     {
@@ -265,7 +366,7 @@ public class MovementController : MonoBehaviour
 
     void HandleMovement()
     {
-        if (wallJumpLockTimer > 0f) return;   // let the wall-jump kick carry
+        if (wallJumpLockTimer > 0f || warpLockTimer > 0f) return;   // let the kick / blink carry
 
         float moveInput = input.MoveInput;
         float target = moveInput * moveSpeed;
@@ -348,6 +449,19 @@ public class MovementController : MonoBehaviour
                 if (IsWallSliding) psm.ChangeState(PlayerState.WallSliding);
                 else if (IsGrounded) psm.ChangeState(PlayerState.Landing);
                 else if (rb.velocity.y < -0.1f) psm.ChangeState(PlayerState.Falling);
+                break;
+
+            case PlayerState.Climbing:
+                if (!isClimbing)
+                    psm.ChangeState(IsGrounded ? PlayerState.Idle : PlayerState.Falling);
+                break;
+
+            case PlayerState.Warping:
+                if (warpLockTimer > 0f) break;               // hold the warp state briefly
+                if (IsGrounded)
+                    psm.ChangeState(Mathf.Abs(input.MoveInput) > 0.01f ? PlayerState.Running : PlayerState.Idle);
+                else if (IsWallSliding) psm.ChangeState(PlayerState.WallSliding);
+                else psm.ChangeState(PlayerState.Falling);
                 break;
         }
     }

@@ -1,57 +1,59 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-// Put this on your LoadPanel. Handles both loading an existing save
-// and (when all slots are full) picking a slot to start a new game in.
+// Drives the LoadPanel using your SaveSlotUI slots.
+// Two modes, matching how MainMenuController calls SetMode():
+//   Load    -> picking a used slot loads that game
+//   NewGame -> picking a slot starts a new game there (overwrites on first save)
 public class LoadMenuController : MonoBehaviour
 {
     public enum Mode { Load, NewGame }
 
-    [SerializeField] private SaveSlotUI[] slots;   // size 3, assign in inspector
-    [SerializeField] private Text titleText;
-    [SerializeField] private Button backButton;
-    [SerializeField] private MainMenuController mainMenu;
+    [SerializeField] private SaveSlotUI[] slots; // assign your 3 SaveSlotUI objects, in order
 
-    private Mode mode = Mode.Load;
+    private Mode currentMode = Mode.Load;
 
-    private void Awake()
+    private void OnEnable() => Refresh();
+
+    // Called by MainMenuController before showing the panel.
+    public void SetMode(Mode mode)
     {
-        if (backButton != null)
-            backButton.onClick.AddListener(() => mainMenu.ShowMainPanel());
-    }
-
-    public void SetMode(Mode m)
-    {
-        mode = m;
-        if (titleText != null)
-            titleText.text = mode == Mode.Load ? "Load Game" : "New Game \u2014 Choose a Slot";
+        currentMode = mode;
         Refresh();
     }
 
-    private void Refresh()
+    // Re-read every slot from disk and rebuild its UI.
+    public void Refresh()
     {
-        SaveData[] data = SaveSystem.LoadAllSlots();   // null entries = empty slots
+        if (slots == null) return;
         for (int i = 0; i < slots.Length; i++)
-            slots[i].Bind(i, data[i], OnSlotSelected, OnSlotDelete);
+        {
+            if (slots[i] == null) continue;
+            SaveData data = SaveSystem.Load(i);
+            // Pass our own methods as the click / delete callbacks SaveSlotUI expects.
+            slots[i].Bind(i, data, OnSlotSelected, OnSlotDelete);
+        }
     }
 
+    // Fired when the player clicks a slot (SaveSlotUI's onSelected callback).
     private void OnSlotSelected(int slot)
     {
-        if (mode == Mode.Load)
+        SaveData data = SaveSystem.Load(slot);
+
+        if (currentMode == Mode.Load)
         {
-            if (SaveSystem.SlotExists(slot))
-                GameManager.Instance.LoadGame(slot);
+            if (data == null) return;                 // empty slot in Load mode: ignore
+            GameManager.Instance.LoadGame(slot);
         }
-        else // NewGame / overwrite
+        else // NewGame: start fresh here (the old save is overwritten on first save)
         {
-            // If SlotExists(slot), consider popping a "Overwrite this save?" confirm here.
             GameManager.Instance.StartNewGame(slot);
         }
     }
 
+    // Fired when the player clicks a slot's delete button (SaveSlotUI's onDelete callback).
     private void OnSlotDelete(int slot)
     {
         SaveSystem.Delete(slot);
-        Refresh();
+        Refresh(); // update the panel so the slot now reads "Empty"
     }
 }

@@ -12,7 +12,9 @@ public enum PlayerState
     Falling,
     Landing,
     WallSliding,
-    WallJumping
+    WallJumping,
+    Climbing,   // gripping a climbable surface
+    Warping     // mid-blink
 }
 
 // Tracks the player's current state and notifies listeners (e.g. an animation
@@ -26,12 +28,15 @@ public class PlayerStateManager : MonoBehaviour
     public event Action<PlayerState> OnStateChanged;
 
     // True when the player is off the ground in any airborne state.
+    // Warping counts as airborne so you can still air-jump out of a blink.
+    // Climbing does NOT — you're gripping a surface, not falling.
     public bool IsAirborne =>
         CurrentState == PlayerState.Jumping ||
         CurrentState == PlayerState.DoubleJumping ||
         CurrentState == PlayerState.Falling ||
         CurrentState == PlayerState.WallSliding ||
-        CurrentState == PlayerState.WallJumping;
+        CurrentState == PlayerState.WallJumping ||
+        CurrentState == PlayerState.Warping;
 
     public void ChangeState(PlayerState newState)
     {

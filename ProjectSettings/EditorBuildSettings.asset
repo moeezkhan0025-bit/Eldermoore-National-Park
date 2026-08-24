@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project A.Z.U.R.E/Scenes/Bootstrap/Bootstrap.unity
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/Bootstrap.unity
     guid: cf81eb367f70187478c356704dea90f8
   - enabled: 1
     path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/MainMenu.unity
@@ -23,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/Game.unity
     guid: 0b3ffbde032f5d4449e1d637171faf3e
+  - enabled: 1
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/CabinINT1.unity
+    guid: c3c9a80004bb06f4cb3a8f9a349a25ed
+  - enabled: 1
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/CabinINT2.unity
+    guid: d968c835ab1998c42b3978e719dc2e08
   m_configObjects: {}

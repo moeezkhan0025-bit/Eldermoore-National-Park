@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// A doorway the player interacts with to change scenes (full swap).
+// A doorway the player interacts with to change scenes, with a fade transition.
 [RequireComponent(typeof(Collider2D))]
 public class Doorway : MonoBehaviour
 {
@@ -10,6 +10,7 @@ public class Doorway : MonoBehaviour
     [SerializeField] private GameObject prompt;
 
     private bool playerInRange;
+    private bool transitioning;   // don't fire twice mid-fade
 
     private void Start()
     {
@@ -18,13 +19,20 @@ public class Doorway : MonoBehaviour
 
     private void Update()
     {
-        if (playerInRange && Input.GetKeyDown(interactKey))
+        if (playerInRange && !transitioning && Input.GetKeyDown(interactKey))
             Enter();
     }
 
     private void Enter()
     {
-        GameManager.Instance.LoadSceneWithSpawn(targetScene, spawnPointId);
+        transitioning = true;
+        if (prompt != null) prompt.SetActive(false);
+
+        // Route through the fader if it exists; otherwise load directly.
+        if (SceneFader.Instance != null)
+            SceneFader.Instance.TransitionToScene(targetScene, spawnPointId);
+        else
+            GameManager.Instance.LoadSceneWithSpawn(targetScene, spawnPointId);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

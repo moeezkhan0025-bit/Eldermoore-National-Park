@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-
     public SaveData CurrentSave { get; private set; }
     public int CurrentSlot { get; private set; } = -1;
 
@@ -15,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string gameplayScene = "Game";
 
     private string pendingSpawnId;
+    private bool pendingRestore;   // set when loading a save, so OnSceneLoaded restores position
 
     private void Awake()
     {
@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        Debug.Log($"[Saves] Save folder: {Application.persistentDataPath}"); // handy while testing
     }
 
     private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
@@ -39,24 +41,46 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (string.IsNullOrEmpty(pendingSpawnId)) return;
-
-        foreach (var sp in FindObjectsOfType<SpawnPoint>())
+        // A) Loading from a save file: drop the player at their saved position.
+        if (pendingRestore)
         {
-            if (sp.Id == pendingSpawnId)
-            {
-                var player = FindObjectOfType<MovementController>();
-                if (player != null)
-                {
-                    var rb = player.GetComponent<Rigidbody2D>();
-                    if (rb != null) { rb.position = sp.transform.position; rb.velocity = Vector2.zero; }
-                    else player.transform.position = sp.transform.position;
-                }
-                break;
-            }
+            pendingRestore = false;
+            var p = FindObjectOfType<MovementController>();
+            if (p != null) PlacePlayer(p, CurrentSave.playerPosition);
+            return; // we just loaded this scene — don't immediately re-save it
         }
-        pendingSpawnId = null;
+
+        // B) Doorway transition: your original spawn-point logic.
+        if (!string.IsNullOrEmpty(pendingSpawnId))
+        {
+            foreach (var sp in FindObjectsOfType<SpawnPoint>())
+            {
+                if (sp.Id == pendingSpawnId)
+                {
+                    var player = FindObjectOfType<MovementController>();
+                    if (player != null) PlacePlayer(player, sp.transform.position);
+                    break;
+                }
+            }
+            pendingSpawnId = null;
+        }
+
+        // C) Autosave whenever we arrive in a real, playable scene.
+        if (CurrentSlot >= 0 && IsSavableScene(scene.name))
+            SaveCurrent();
     }
+
+    // Shared helper: move the player, respecting physics if there's a Rigidbody2D.
+    private void PlacePlayer(MovementController player, Vector3 pos)
+    {
+        var rb = player.GetComponent<Rigidbody2D>();
+        if (rb != null) { rb.position = pos; rb.velocity = Vector2.zero; }
+        else player.transform.position = pos;
+    }
+
+    // Menus / cutscenes aren't gameplay, so we don't autosave in them.
+    private bool IsSavableScene(string name) =>
+        name != mainMenuScene && name != characterSelectScene && name != introCutsceneScene;
 
     // ---------- NEW GAME ----------
     public void StartNewGame(int slot)
@@ -96,14 +120,24 @@ public class GameManager : MonoBehaviour
         if (data == null) return;
         CurrentSlot = slot;
         CurrentSave = data;
+        pendingRestore = true;   // tell OnSceneLoaded to restore the saved position
         SceneManager.LoadScene(
             string.IsNullOrEmpty(data.sceneName) ? gameplayScene : data.sceneName);
     }
 
+    // ---------- SAVING ----------
+    // Captures the live world state, then writes it to the current slot.
     public void SaveCurrent()
     {
-        if (CurrentSlot >= 0 && CurrentSave != null)
-            SaveSystem.Save(CurrentSlot, CurrentSave);
+        if (CurrentSlot < 0 || CurrentSave == null) return;
+
+        CurrentSave.sceneName = SceneManager.GetActiveScene().name;
+
+        var player = FindObjectOfType<MovementController>();
+        if (player != null)
+            CurrentSave.playerPosition = player.transform.position;
+
+        SaveSystem.Save(CurrentSlot, CurrentSave);
     }
 
     // ---------- QUIT ----------
@@ -114,5 +148,4 @@ public class GameManager : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
-
 }

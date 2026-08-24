@@ -2,64 +2,24 @@ using System;
 using System.IO;
 using UnityEngine;
 
-// Handles reading/writing the three save slots as JSON files on disk.
-// Files live in Application.persistentDataPath (safe, writable on all platforms).
+// Reads and writes save files. Three slots, JSON, in Application.persistentDataPath.
+// Static class — never attached to a GameObject.
 public static class SaveSystem
 {
     public const int SlotCount = 3;
 
-    private static string SlotPath(int slot) =>
+    static string PathFor(int slot) =>
         Path.Combine(Application.persistentDataPath, $"save_{slot}.json");
 
-    public static bool SlotExists(int slot) => File.Exists(SlotPath(slot));
+    public static bool SlotExists(int slot) => File.Exists(PathFor(slot));
 
-    public static void Save(int slot, SaveData data)
+    public static bool HasAnySave()
     {
-        data.lastSavedUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        string json = JsonUtility.ToJson(data, prettyPrint: true);
-        File.WriteAllText(SlotPath(slot), json);
-    }
-
-    public static SaveData Load(int slot)
-    {
-        if (!SlotExists(slot)) return null;
-        string json = File.ReadAllText(SlotPath(slot));
-        return JsonUtility.FromJson<SaveData>(json);
-    }
-
-    public static void Delete(int slot)
-    {
-        if (SlotExists(slot)) File.Delete(SlotPath(slot));
-    }
-
-    // Metadata for all three slots. A null entry = empty slot.
-    // Use this to populate the Load Game screen.
-    public static SaveData[] LoadAllSlots()
-    {
-        var slots = new SaveData[SlotCount];
         for (int i = 0; i < SlotCount; i++)
-            slots[i] = Load(i);
-        return slots;
+            if (SlotExists(i)) return true;
+        return false;
     }
 
-    // For "Continue": the most recently saved non-empty slot, or -1 if none.
-    public static int GetMostRecentSlot()
-    {
-        int best = -1;
-        long bestTime = long.MinValue;
-        for (int i = 0; i < SlotCount; i++)
-        {
-            var data = Load(i);
-            if (data != null && data.lastSavedUnixTime > bestTime)
-            {
-                bestTime = data.lastSavedUnixTime;
-                best = i;
-            }
-        }
-        return best;
-    }
-
-    // For "New Game": first empty slot, or -1 if all three are full.
     public static int GetFirstEmptySlot()
     {
         for (int i = 0; i < SlotCount; i++)
@@ -67,10 +27,57 @@ public static class SaveSystem
         return -1;
     }
 
-    public static bool HasAnySave()
+    // Most recently saved slot, or -1 if there are no saves. Used by Continue().
+    public static int GetMostRecentSlot()
     {
+        int best = -1;
+        long bestTime = long.MinValue;
         for (int i = 0; i < SlotCount; i++)
-            if (SlotExists(i)) return true;
-        return false;
+        {
+            SaveData d = Load(i);
+            if (d != null && d.lastSavedUnixTime > bestTime)
+            {
+                bestTime = d.lastSavedUnixTime;
+                best = i;
+            }
+        }
+        return best;
+    }
+
+    // Two-arg signature to match GameManager.SaveCurrent(): SaveSystem.Save(slot, data).
+    public static void Save(int slot, SaveData data)
+    {
+        if (data == null) return;
+        data.lastSavedUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // stamp the time
+        try
+        {
+            string json = JsonUtility.ToJson(data, true);
+            File.WriteAllText(PathFor(slot), json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[SaveSystem] Failed to save slot {slot}: {e.Message}");
+        }
+    }
+
+    public static SaveData Load(int slot)
+    {
+        if (!SlotExists(slot)) return null;
+        try
+        {
+            string json = File.ReadAllText(PathFor(slot));
+            return JsonUtility.FromJson<SaveData>(json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[SaveSystem] Failed to load slot {slot}: {e.Message}");
+            return null;
+        }
+    }
+
+    public static void Delete(int slot)
+    {
+        try { if (SlotExists(slot)) File.Delete(PathFor(slot)); }
+        catch (Exception e) { Debug.LogError($"[SaveSystem] Failed to delete slot {slot}: {e.Message}"); }
     }
 }
