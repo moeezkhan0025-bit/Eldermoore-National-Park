@@ -6,9 +6,10 @@ using UnityEngine.UI;
 // Drives the pause menu shell: open/close, time freeze, and tab switching.
 // Put this on MenuRoot. Front-end only — panels can be empty for now.
 //
-// Reads from your generated GameController wrapper, using ONLY actions that exist
-// in your asset today: UI.Cancel (open/close) and UI.Navigate (cycle tabs).
-// See notes below to upgrade to a dedicated Menu button + shoulder-button tabs.
+// Reads from your generated GameController wrapper:
+//   Player.Menu   -> open / close (bind to Start/Options)
+//   UI.Cancel     -> close while open (Circle)
+//   UI.Navigate   -> cycle tabs left/right on the tab bar
 public class MenuController : MonoBehaviour
 {
     [Header("Root")]
@@ -33,19 +34,26 @@ public class MenuController : MonoBehaviour
         menuRoot.SetActive(false);
     }
 
-    void OnEnable() { controls?.UI.Enable(); }
-    void OnDisable() { controls?.UI.Disable(); }
+    // Menu lives in the Player map; Cancel/Navigate in the UI map — enable both.
+    void OnEnable() { controls?.Player.Enable(); controls?.UI.Enable(); }
+    void OnDisable() { controls?.Player.Disable(); controls?.UI.Disable(); }
     void OnDestroy() { controls?.Dispose(); }
 
     void Update()
     {
-        // TEMP toggle: Cancel opens and closes. Swap for a dedicated Menu button later.
-        if (!isOpen && controls.UI.Cancel.WasPressedThisFrame()) { Open(); return; }
+        // Start/Options toggles the menu open and closed.
+        if (controls.Player.Menu.WasPressedThisFrame())
+        {
+            if (isOpen) Close(); else Open();
+            return;
+        }
+
         if (!isOpen) return;
 
+        // Circle backs out while open.
         if (controls.UI.Cancel.WasPressedThisFrame()) { Close(); return; }
 
-        // Cycle tabs by pushing Navigate left/right, latched so it steps once per push.
+        // Push Navigate left/right to cycle tabs (latched so it steps once per push).
         float x = controls.UI.Navigate.ReadValue<Vector2>().x;
         if (Mathf.Abs(x) < 0.5f) navLatched = false;
         else if (!navLatched)

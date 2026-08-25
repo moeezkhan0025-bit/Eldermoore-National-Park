@@ -8,7 +8,7 @@ using UnityEngine;
 //
 // If your project uses the new Input System package instead, replace the bodies
 // of these properties with reads from your InputActions.
-public class PlayerInputHandler : MonoBehaviour
+public class PlayerInputHandler : MonoBehaviour, IPlayerInput
 {
     [Tooltip("How far down the stick/key must be held to count as 'pressing down' for drop-through.")]
     [SerializeField] float downThreshold = 0.5f;

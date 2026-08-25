@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(PlayerStateManager))]
 public class MovementController : MonoBehaviour
 {
@@ -43,7 +42,7 @@ public class MovementController : MonoBehaviour
 
     [Header("Climb")]
     [SerializeField] float climbSpeed = 5f;
-    [SerializeField] float climbHorizontalFactor = 0.5f; // sideways freedom on a climb surface (0 = pure vertical)
+    [SerializeField] float climbHorizontalFactor = 0.5f;
     [SerializeField] LayerMask climbableLayer;
     bool isClimbing;
     public bool IsTouchingClimbable { get; private set; }
@@ -52,17 +51,17 @@ public class MovementController : MonoBehaviour
     [Header("Warp (charged blink)")]
     [SerializeField] int maxWarpCharges = 2;
     [SerializeField] float warpDistance = 4f;
-    [SerializeField] float warpCooldown = 0.25f;     // min time between warps
-    [SerializeField] float warpRechargeTime = 2f;    // seconds to regen one charge
-    [SerializeField] bool refillOnLanding = true;    // grounded refills all charges
-    [SerializeField] float warpLockTime = 0.06f;     // brief input lock after a blink
-    [SerializeField] float warpSkin = 0.1f;          // gap kept from walls when clamped
-    [SerializeField] LayerMask warpObstacleLayer;    // set to Ground + Wall layers
+    [SerializeField] float warpCooldown = 0.25f;
+    [SerializeField] float warpRechargeTime = 2f;
+    [SerializeField] bool refillOnLanding = true;
+    [SerializeField] float warpLockTime = 0.06f;
+    [SerializeField] float warpSkin = 0.1f;
+    [SerializeField] LayerMask warpObstacleLayer;
     int currentWarpCharges;
     float warpCooldownTimer;
     float warpRechargeTimer;
     float warpLockTimer;
-    public int WarpCharges => currentWarpCharges;    // handy for a future UI
+    public int WarpCharges => currentWarpCharges;
 
     [Header("Drop Through")]
     [SerializeField] string platformLayer = "OneWayPlatform";
@@ -80,7 +79,7 @@ public class MovementController : MonoBehaviour
 
     Rigidbody2D rb;
     PlayerStateManager psm;
-    PlayerInputHandler input;
+    IPlayerInput input;
 
     public bool IsGrounded { get; private set; }
     public bool IsTouchingLeft { get; private set; }
@@ -94,13 +93,19 @@ public class MovementController : MonoBehaviour
 
     bool isDropping = false;
     ContactFilter2D platformFilter;
-    bool setupValid = true;   // becomes false if a required reference is missing
+    bool setupValid = true;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         psm = GetComponent<PlayerStateManager>();
-        input = GetComponent<PlayerInputHandler>();
+
+        input = GetComponent<IPlayerInput>();
+        if (input == null)
+        {
+            Debug.LogError($"[{name}] No IPlayerInput found — add ControllerInputHandler or PlayerInputHandler.", this);
+            setupValid = false;
+        }
 
         // --- Loud, specific validation so nothing fails silently ---
         if (groundCheck == null) { Debug.LogError($"[{name}] 'Ground Check' collider is not assigned.", this); setupValid = false; }
@@ -111,12 +116,10 @@ public class MovementController : MonoBehaviour
         if (LayerMask.NameToLayer(platformLayer) == -1)
             Debug.LogWarning($"[{name}] Layer '{platformLayer}' doesn't exist — drop-through is disabled. Create it under Tags & Layers.", this);
 
-        // Recommended rigidbody settings (also worth setting in the Inspector).
         rb.freezeRotation = true;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
-        // Derive the jump arc from the feel values.
         float gravityStrength = (2f * jumpHeight) / (timeToApex * timeToApex);
         baseGravityScale = gravityStrength / Mathf.Abs(Physics2D.gravity.y);
         jumpForce = gravityStrength * timeToApex;
@@ -132,16 +135,14 @@ public class MovementController : MonoBehaviour
 
     void Update()
     {
-        if (!setupValid) return;   // don't spam NREs if something's unassigned
+        if (!setupValid) return;
 
         UpdateChecks();
         UpdateTimers();
 
-        // Climb takes priority over normal movement.
         HandleClimb();
         if (isClimbing) { UpdateState(); return; }
 
-        // Warp is an instant action; may reposition the player this frame.
         HandleWarp();
 
         UpdateWallSlide();
@@ -218,7 +219,6 @@ public class MovementController : MonoBehaviour
         warpCooldownTimer -= Time.deltaTime;
         warpLockTimer -= Time.deltaTime;
 
-        // Regenerate one warp charge over time.
         if (currentWarpCharges < maxWarpCharges)
         {
             warpRechargeTimer -= Time.deltaTime;
@@ -235,27 +235,24 @@ public class MovementController : MonoBehaviour
 
     void HandleClimb()
     {
-        // Grab on: touching a climbable surface, off the ground, and pressing up/down or grab.
         if (!isClimbing && IsTouchingClimbable && !IsGrounded &&
             (Mathf.Abs(input.VerticalInput) > 0.01f || input.GrabHeld))
         {
             isClimbing = true;
-            currentJumpCount = 0;                 // refresh jumps when you grab on
+            currentJumpCount = 0;
             psm.ChangeState(PlayerState.Climbing);
         }
 
         if (!isClimbing) return;
 
-        // Let go: off the surface or back on the ground.
         if (!IsTouchingClimbable || IsGrounded) { isClimbing = false; return; }
 
-        // Jump off the surface.
         if (input.JumpPressed) { isClimbing = false; ExecuteJump(); }
     }
 
     void HandleClimbMovement()
     {
-        rb.gravityScale = 0f;                      // no gravity while gripping
+        rb.gravityScale = 0f;
         float v = input.VerticalInput;
         float h = input.MoveInput;
         rb.velocity = new Vector2(h * climbSpeed * climbHorizontalFactor, v * climbSpeed);
@@ -273,12 +270,10 @@ public class MovementController : MonoBehaviour
 
     void ExecuteWarp()
     {
-        // Direction from movement input; fall back to facing when neutral.
         Vector2 dir = new Vector2(input.MoveInput, input.VerticalInput);
         if (dir.sqrMagnitude < 0.01f) dir = new Vector2(FacingRight ? 1f : -1f, 0f);
         dir.Normalize();
 
-        // Clamp against obstacles so we don't blink inside geometry.
         float dist = warpDistance;
         RaycastHit2D hit = Physics2D.Raycast(rb.position, dir, warpDistance, warpObstacleLayer);
         if (hit.collider != null) dist = Mathf.Max(0f, hit.distance - warpSkin);
@@ -366,7 +361,7 @@ public class MovementController : MonoBehaviour
 
     void HandleMovement()
     {
-        if (wallJumpLockTimer > 0f || warpLockTimer > 0f) return;   // let the kick / blink carry
+        if (wallJumpLockTimer > 0f || warpLockTimer > 0f) return;
 
         float moveInput = input.MoveInput;
         float target = moveInput * moveSpeed;
@@ -457,7 +452,7 @@ public class MovementController : MonoBehaviour
                 break;
 
             case PlayerState.Warping:
-                if (warpLockTimer > 0f) break;               // hold the warp state briefly
+                if (warpLockTimer > 0f) break;
                 if (IsGrounded)
                     psm.ChangeState(Mathf.Abs(input.MoveInput) > 0.01f ? PlayerState.Running : PlayerState.Idle);
                 else if (IsWallSliding) psm.ChangeState(PlayerState.WallSliding);

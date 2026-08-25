@@ -1,10 +1,8 @@
 using UnityEngine;
 
-// Makes the player persist across scene loads, and guarantees only ONE player
-// ever exists. Put this on the player object in the RangerHQ scene (the first
-// gameplay scene the player appears in). Any other scene that also contains a
-// player with this component will have its copy destroyed on arrival, so the
-// original carried-in player is the one that survives.
+// Makes the player persist across scenes and guarantees only ONE ever exists.
+// The player is NOT placed in any scene — GameManager spawns it the first time
+// you enter a gameplay scene, and it survives from then on.
 public class PlayerPersistence : MonoBehaviour
 {
     public static PlayerPersistence Instance { get; private set; }
@@ -13,12 +11,15 @@ public class PlayerPersistence : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            // A persistent player already exists — this is a duplicate. Remove it.
-            Destroy(gameObject);
+            Destroy(gameObject);   // duplicate — the existing persistent player wins
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 }
