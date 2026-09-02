@@ -30,4 +30,6 @@ public class ControllerInputHandler : MonoBehaviour, IPlayerInput
     public bool DropPressed => controls.Player.Jump.WasPressedThisFrame() && Move.y <= -downThreshold;
     public bool GrabHeld => controls.Player.Climb.IsPressed();   // Climb action = grip input
     public bool WarpPressed => controls.Player.Warp.WasPressedThisFrame();
+    // in ControllerInputHandler, with the other reads:
+    public bool InteractPressed => controls.Player.Interact.WasPressedThisFrame();
 }

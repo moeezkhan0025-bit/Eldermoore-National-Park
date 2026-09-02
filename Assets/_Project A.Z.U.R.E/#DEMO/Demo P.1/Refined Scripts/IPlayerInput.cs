@@ -10,4 +10,5 @@ public interface IPlayerInput
     bool DropPressed { get; }     // pressed this frame WHILE holding down (drop-through)
     bool GrabHeld { get; }        // held to grip a climb surface
     bool WarpPressed { get; }     // pressed this frame (blink)
+    bool InteractPressed { get; }
 }

@@ -1,51 +1,31 @@
 using UnityEngine;
 
 // A doorway the player interacts with to change scenes, with a fade transition.
-[RequireComponent(typeof(Collider2D))]
-public class Doorway : MonoBehaviour
+// Now driven by the shared interaction system: PlayerInteractor detects this
+// doorway's trigger and calls Interact() on Triangle — so this script no longer
+// reads input, tracks range, or manages its own prompt.
+//
+// WIRING (per doorway):
+//   targetScene   -> the scene to load (e.g. "Game", "CabinInterior")
+//   spawnPointId  -> the SpawnPoint.Id in that scene to arrive at
+public class Doorway : Interactable
 {
     [SerializeField] private string targetScene = "Game";
     [SerializeField] private string spawnPointId = "FromRangerHQ";
-    [SerializeField] private KeyCode interactKey = KeyCode.E;
-    [SerializeField] private GameObject prompt;
 
-    private bool playerInRange;
-    private bool transitioning;   // don't fire twice mid-fade
+    private bool transitioning;   // guard so a mid-fade re-press does nothing
 
-    private void Start()
+    public override void Interact(GameObject player)
     {
-        if (prompt != null) prompt.SetActive(false);
-    }
-
-    private void Update()
-    {
-        if (playerInRange && !transitioning && Input.GetKeyDown(interactKey))
-            Enter();
-    }
-
-    private void Enter()
-    {
+        if (transitioning) return;
         transitioning = true;
-        if (prompt != null) prompt.SetActive(false);
 
-        // Route through the fader if it exists; otherwise load directly.
+        // Route through the fader if present; otherwise load directly.
         if (SceneFader.Instance != null)
             SceneFader.Instance.TransitionToScene(targetScene, spawnPointId);
-        else
+        else if (GameManager.Instance != null)
             GameManager.Instance.LoadSceneWithSpawn(targetScene, spawnPointId);
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.GetComponentInParent<MovementController>() == null) return;
-        playerInRange = true;
-        if (prompt != null) prompt.SetActive(true);
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.GetComponentInParent<MovementController>() == null) return;
-        playerInRange = false;
-        if (prompt != null) prompt.SetActive(false);
+        else
+            Debug.LogError($"[{name}] No SceneFader or GameManager to load '{targetScene}'.", this);
     }
 }

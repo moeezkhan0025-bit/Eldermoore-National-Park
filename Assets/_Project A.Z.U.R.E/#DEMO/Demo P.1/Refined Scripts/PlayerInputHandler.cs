@@ -41,4 +41,5 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerInput
 
     // True for the one frame the warp key is pressed.
     public bool WarpPressed => Input.GetKeyDown(warpKey);
+    public bool InteractPressed => Input.GetKeyDown(KeyCode.E);
 }

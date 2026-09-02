@@ -1,82 +1,37 @@
 using UnityEngine;
 
-// A fixed-link warp ZONE. The collider is a TRIGGER, so it's a walk-through
-// hitbox, not a solid pad. Wire each pad's "destination" to its partner
-// (A -> B and B -> A) and the player travels back and forth.
+// A fixed-link warp ZONE, now driven by the shared interaction system.
+// The PlayerInteractor detects this pad's trigger and calls Interact() when the
+// player presses Triangle — so this script no longer reads input, tracks range,
+// or manages its own prompt (the interactor owns all that).
 //
-// WIRING (per pad):
+// WIRING (per pad), unchanged from before:
 //   destination -> the OTHER pad   (these CROSS: A->B, B->A)
 //   exitPoint   -> a child of THIS pad, on the ground at THIS pad's location
-//                  (these DO NOT cross — each pad's exit point belongs to itself)
-[RequireComponent(typeof(Collider2D))]
-public class WarpPad : MonoBehaviour
+//                  (each pad's exit belongs to itself — these DON'T cross)
+public class WarpPad : Interactable
 {
-    [SerializeField] private WarpPad destination;      // the partner zone (REQUIRED)
-    [SerializeField] private KeyCode activateKey = KeyCode.E;
-    [SerializeField] private Transform exitPoint;      // GROUND landing spot for THIS pad
-    [SerializeField] private GameObject prompt;        // "Press E to warp" hint (optional)
+    [SerializeField] private WarpPad destination;   // the partner zone (REQUIRED)
+    [SerializeField] private Transform exitPoint;   // GROUND landing spot for THIS pad
 
-    private Transform playerInRange;
-    private bool justArrived;   // guard: prevents instantly warping back on arrival
-
-    private void Start()
+    // Triangle pressed while standing on this pad -> travel to the partner.
+    public override void Interact(GameObject player)
     {
-        if (prompt != null) prompt.SetActive(false);
+        if (destination == null || destination == this)
+        {
+            Debug.LogWarning($"[{name}] WarpPad has no valid destination.", this);
+            return;
+        }
+        destination.ReceiveWarp(player.transform);
     }
 
-    private void Update()
-    {
-        if (playerInRange != null && !justArrived && Input.GetKeyDown(activateKey))
-            Activate();
-    }
-
-    private void Activate()
-    {
-        if (destination == null || destination == this) return;
-        destination.ReceiveWarp(playerInRange);
-    }
-
-    // Called by the SOURCE zone to place the player at THIS zone's landing spot.
+    // Called by the SOURCE pad to place the player at THIS pad's landing spot.
     public void ReceiveWarp(Transform player)
     {
         Vector3 target = exitPoint != null ? exitPoint.position : transform.position;
-
         var rb = player.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.position = target;
-            rb.velocity = Vector2.zero;   // don't carry momentum through the warp
-        }
-        else
-        {
-            player.position = target;
-        }
-
-        // FIX: only guard against an instant bounce-back if the player actually
-        // landed INSIDE this pad's trigger. If the exit point is on the ground
-        // below a floating hitbox, the player lands OUTSIDE the trigger — so
-        // OnTriggerExit2D would never fire and the guard would stay stuck on,
-        // permanently blocking the return trip.
-        var col = GetComponent<Collider2D>();
-        justArrived = col.OverlapPoint(target);
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        var mc = other.GetComponentInParent<MovementController>();
-        if (mc == null) return;
-
-        playerInRange = mc.transform;   // the PLAYER ROOT, not a child check-collider
-        if (prompt != null && !justArrived) prompt.SetActive(true);
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.GetComponentInParent<MovementController>() == null) return;
-
-        playerInRange = null;
-        justArrived = false;            // leaving the zone clears the guard
-        if (prompt != null) prompt.SetActive(false);
+        if (rb != null) { rb.position = target; rb.velocity = Vector2.zero; }
+        else player.position = target;
     }
 
     // --- Editor visualization ---
@@ -86,7 +41,6 @@ public class WarpPad : MonoBehaviour
         Vector3 landing = exitPoint != null ? exitPoint.position : transform.position;
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(landing, 0.2f);
-
         if (destination != null && destination != this)
         {
             Gizmos.color = Color.cyan;

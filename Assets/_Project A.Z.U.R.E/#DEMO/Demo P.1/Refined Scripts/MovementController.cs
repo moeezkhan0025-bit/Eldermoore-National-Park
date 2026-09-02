@@ -58,6 +58,7 @@ public class MovementController : MonoBehaviour
     [SerializeField] float warpSkin = 0.1f;
     [SerializeField] LayerMask warpObstacleLayer;
     int currentWarpCharges;
+    int effectiveMaxWarpCharges;   // base + WarpChargesBonus stat
     float warpCooldownTimer;
     float warpRechargeTimer;
     float warpLockTimer;
@@ -80,6 +81,7 @@ public class MovementController : MonoBehaviour
     Rigidbody2D rb;
     PlayerStateManager psm;
     IPlayerInput input;
+    PlayerStats stats;   // optional — movement stats scale base values when present
 
     public bool IsGrounded { get; private set; }
     public bool IsTouchingLeft { get; private set; }
@@ -95,10 +97,17 @@ public class MovementController : MonoBehaviour
     ContactFilter2D platformFilter;
     bool setupValid = true;
 
+    // ---- stat multiplier helpers (default to 1x / +0 when no PlayerStats) ----
+    float SpeedMult => stats != null ? stats.GetMultiplier(StatType.SpeedMult) : 1f;
+    float JumpMult => stats != null ? stats.GetMultiplier(StatType.JumpMult) : 1f;
+    float ClimbMult => stats != null ? stats.GetMultiplier(StatType.ClimbSpeedMult) : 1f;
+    int WarpBonus => stats != null ? Mathf.RoundToInt(stats.Get(StatType.WarpChargesBonus)) : 0;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         psm = GetComponent<PlayerStateManager>();
+        stats = GetComponent<PlayerStats>();   // optional; movement works without it
 
         input = GetComponent<IPlayerInput>();
         if (input == null)
@@ -107,14 +116,13 @@ public class MovementController : MonoBehaviour
             setupValid = false;
         }
 
-        // --- Loud, specific validation so nothing fails silently ---
         if (groundCheck == null) { Debug.LogError($"[{name}] 'Ground Check' collider is not assigned.", this); setupValid = false; }
         if (leftWallCheck == null) { Debug.LogError($"[{name}] 'Left Wall Check' collider is not assigned.", this); setupValid = false; }
         if (rightWallCheck == null) { Debug.LogError($"[{name}] 'Right Wall Check' collider is not assigned.", this); setupValid = false; }
         if (spriteChild == null) { Debug.LogError($"[{name}] 'Sprite Child' transform is not assigned.", this); setupValid = false; }
         if (groundLayer == 0) { Debug.LogWarning($"[{name}] 'Ground Layer' mask is empty — you'll never be grounded.", this); }
         if (LayerMask.NameToLayer(platformLayer) == -1)
-            Debug.LogWarning($"[{name}] Layer '{platformLayer}' doesn't exist — drop-through is disabled. Create it under Tags & Layers.", this);
+            Debug.LogWarning($"[{name}] Layer '{platformLayer}' doesn't exist — drop-through is disabled.", this);
 
         rb.freezeRotation = true;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -129,13 +137,33 @@ public class MovementController : MonoBehaviour
         platformFilter.SetLayerMask(LayerMask.GetMask(platformLayer));
         platformFilter.useTriggers = true;
 
-        currentWarpCharges = maxWarpCharges;
+        RefreshWarpCharges();
+    }
+
+    // Recompute max warp charges from base + stat bonus, keeping current in range.
+    void RefreshWarpCharges()
+    {
+        int newMax = Mathf.Max(0, maxWarpCharges + WarpBonus);
+        if (newMax != effectiveMaxWarpCharges)
+        {
+            effectiveMaxWarpCharges = newMax;
+            currentWarpCharges = Mathf.Min(currentWarpCharges <= 0 ? newMax : currentWarpCharges, newMax);
+        }
+        if (currentWarpCharges == 0 && effectiveMaxWarpCharges > 0 && !Application.isPlaying)
+            currentWarpCharges = effectiveMaxWarpCharges;
+    }
+
+    void Start()
+    {
+        currentWarpCharges = effectiveMaxWarpCharges;   // start full
         warpRechargeTimer = warpRechargeTime;
     }
 
     void Update()
     {
         if (!setupValid) return;
+
+        RefreshWarpCharges();   // picks up gear/potion warp-charge bonuses live
 
         UpdateChecks();
         UpdateTimers();
@@ -181,7 +209,7 @@ public class MovementController : MonoBehaviour
         {
             coyoteTimer = coyoteTime;
             currentJumpCount = 0;
-            if (refillOnLanding) currentWarpCharges = maxWarpCharges;
+            if (refillOnLanding) currentWarpCharges = effectiveMaxWarpCharges;
         }
         if (!wasGrounded && IsGrounded)
             psm.ChangeState(PlayerState.Landing);
@@ -219,7 +247,7 @@ public class MovementController : MonoBehaviour
         warpCooldownTimer -= Time.deltaTime;
         warpLockTimer -= Time.deltaTime;
 
-        if (currentWarpCharges < maxWarpCharges)
+        if (currentWarpCharges < effectiveMaxWarpCharges)
         {
             warpRechargeTimer -= Time.deltaTime;
             if (warpRechargeTimer <= 0f)
@@ -255,7 +283,8 @@ public class MovementController : MonoBehaviour
         rb.gravityScale = 0f;
         float v = input.VerticalInput;
         float h = input.MoveInput;
-        rb.velocity = new Vector2(h * climbSpeed * climbHorizontalFactor, v * climbSpeed);
+        float cs = climbSpeed * ClimbMult;   // <- climb speed scaled by stat
+        rb.velocity = new Vector2(h * cs * climbHorizontalFactor, v * cs);
         HandleFlip();
     }
 
@@ -334,7 +363,7 @@ public class MovementController : MonoBehaviour
 
     void ExecuteJump()
     {
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce * JumpMult);   // <- jump scaled
         coyoteTimer = 0f;
         currentJumpCount = 1;
         psm.ChangeState(PlayerState.Jumping);
@@ -343,7 +372,7 @@ public class MovementController : MonoBehaviour
 
     void ExecuteDoubleJump()
     {
-        rb.velocity = new Vector2(rb.velocity.x, doubleJumpForce);
+        rb.velocity = new Vector2(rb.velocity.x, doubleJumpForce * JumpMult);   // <- jump scaled
         doubleJumpBufferTimer = 0f;
         currentJumpCount++;
         psm.ChangeState(PlayerState.DoubleJumping);
@@ -352,7 +381,7 @@ public class MovementController : MonoBehaviour
 
     void ExecuteWallJump()
     {
-        rb.velocity = new Vector2(-wallDirection * wallJumpForceX, wallJumpForceY);
+        rb.velocity = new Vector2(-wallDirection * wallJumpForceX, wallJumpForceY * JumpMult);
         wallJumpLockTimer = wallJumpLockTime;
         currentJumpCount = 1;
         psm.ChangeState(PlayerState.WallJumping);
@@ -364,7 +393,7 @@ public class MovementController : MonoBehaviour
         if (wallJumpLockTimer > 0f || warpLockTimer > 0f) return;
 
         float moveInput = input.MoveInput;
-        float target = moveInput * moveSpeed;
+        float target = moveInput * moveSpeed * SpeedMult;   // <- run speed scaled
         bool moving = Mathf.Abs(moveInput) > 0.01f;
 
         float rate = IsGrounded ? (moving ? acceleration : deceleration) : airAcceleration;
