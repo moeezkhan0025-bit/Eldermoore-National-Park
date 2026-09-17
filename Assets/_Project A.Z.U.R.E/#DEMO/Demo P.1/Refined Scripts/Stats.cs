@@ -1,11 +1,7 @@
 // The character stats your game tracks. Extend freely.
-//
-// Two flavors of stat here:
-//  • Flat combat stats (Attack, Defense, MaxHealth...) — added up.
-//  • Movement MULTIPLIERS (SpeedMult, JumpMult...) — these scale your
-//    MovementController's tuned base values. A multiplier of 1.0 = normal.
-//    Because base is 0 for a stat you don't list, movement stats need a
-//    sensible default of 1 — PlayerStats handles that (see GetMultiplier).
+//   • Flat stats (Attack, Defense, MaxHealth...) are added up.
+//   • Multiplier stats (SpeedMult, JumpMult, WarpDistanceMult...) scale a base
+//     value; 0 = normal, 0.25 = +25%. Leave their BASE at 0 in PlayerStats.
 public enum StatType
 {
     // Combat / flat
@@ -14,14 +10,16 @@ public enum StatType
     Defense,
     SpellPower,
 
-    // Movement multipliers (1.0 = your normal tuned feel)
+    // Movement multipliers (0 = normal)
     SpeedMult,
     JumpMult,
-    WarpChargesBonus,   // flat add to warp charges (not a multiplier)
-    ClimbSpeedMult
+    ClimbSpeedMult,
+    WarpDistanceMult,     // NEW: scales how far a warp blinks
+
+    // Flat movement add
+    WarpChargesBonus
 }
 
-// One stat change (additive). e.g. +5 Attack, or +0.5 SpeedMult.
 [System.Serializable]
 public class StatModifier
 {

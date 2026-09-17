@@ -38,6 +38,7 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerInput
 
     // Held to grip a climbable surface (alternative to pressing up/down).
     public bool GrabHeld => Input.GetKey(grabKey);
+    public bool GrabPressed => Input.GetKeyDown(grabKey);
 
     // True for the one frame the warp key is pressed.
     public bool WarpPressed => Input.GetKeyDown(warpKey);

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3677ac2825a87924cbfeff57531ac57e, type: 3}
+  m_Name: Spell_Recall
+  m_EditorClassIdentifier: 
+  id: spell_recall
+  displayName: Recall
+  icon: {fileID: 1902806948, guid: e3b73c015afa2f547ac670c68bcd6199, type: 3}
+  description: Warp back to safety.
+  inputSequence: 000000000100000002000000
+  cooldown: 3
+  effect: {fileID: 0}
+  requirements: []

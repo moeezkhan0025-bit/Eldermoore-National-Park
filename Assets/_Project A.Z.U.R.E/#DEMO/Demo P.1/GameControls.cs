@@ -154,6 +154,15 @@ public partial class @GameController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EnterCast"",
+                    ""type"": ""Button"",
+                    ""id"": ""85d8acaf-411a-4300-a1e9-34c3edd423e4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -244,6 +253,17 @@ public partial class @GameController: IInputActionCollection2, IDisposable
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4270b4fa-2f8d-4beb-9776-e313e8d464a1"",
+                    ""path"": ""<DualShockGamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EnterCast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -325,6 +345,154 @@ public partial class @GameController: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Cast"",
+            ""id"": ""5907ef6a-6f97-4380-9299-9f990f6e7ceb"",
+            ""actions"": [
+                {
+                    ""name"": ""ExitCast"",
+                    ""type"": ""Button"",
+                    ""id"": ""ffd5b9d3-4594-434e-a628-dc8fb9f7ce16"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CyclePrev"",
+                    ""type"": ""Button"",
+                    ""id"": ""55221bfd-77b9-4cf7-8dd6-21576219f54f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleNext"",
+                    ""type"": ""Button"",
+                    ""id"": ""cf23c9d3-61a2-4a2b-a815-28d97ae5d18b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""North"",
+                    ""type"": ""Button"",
+                    ""id"": ""6ffb0d02-64cb-458a-a417-09363697cd98"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""South"",
+                    ""type"": ""Button"",
+                    ""id"": ""bb644c31-7151-4ec3-9fb1-f184b309a38c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""East"",
+                    ""type"": ""Button"",
+                    ""id"": ""286c5f5c-f008-4a40-b656-582cf5a5eafc"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""West"",
+                    ""type"": ""Button"",
+                    ""id"": ""f8241dce-a3c3-48a4-8cb0-0c365c1ed6c4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b5e55e71-64af-4b3d-988b-cf1855c63a25"",
+                    ""path"": ""<DualShockGamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ExitCast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3092b399-32f0-486f-a706-1b35241dfbe3"",
+                    ""path"": ""<DualShockGamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CyclePrev"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6850e915-07fd-4d92-80fb-365b12b525b5"",
+                    ""path"": ""<DualShockGamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleNext"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6403af76-e377-4b93-b621-2c0fb2150294"",
+                    ""path"": ""<DualShockGamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""North"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""50e119c1-d56e-486b-bac7-e665d7f603b2"",
+                    ""path"": ""<DualShockGamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""South"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""325a6e1e-f849-4623-8424-84538b4ca6ce"",
+                    ""path"": ""<DualShockGamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""East"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2fe083b2-c2df-4e76-82ed-70caa5ba5220"",
+                    ""path"": ""<DualShockGamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""West"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -338,17 +506,28 @@ public partial class @GameController: IInputActionCollection2, IDisposable
         m_Player_Cast = m_Player.FindAction("Cast", throwIfNotFound: true);
         m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_EnterCast = m_Player.FindAction("EnterCast", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
+        // Cast
+        m_Cast = asset.FindActionMap("Cast", throwIfNotFound: true);
+        m_Cast_ExitCast = m_Cast.FindAction("ExitCast", throwIfNotFound: true);
+        m_Cast_CyclePrev = m_Cast.FindAction("CyclePrev", throwIfNotFound: true);
+        m_Cast_CycleNext = m_Cast.FindAction("CycleNext", throwIfNotFound: true);
+        m_Cast_North = m_Cast.FindAction("North", throwIfNotFound: true);
+        m_Cast_South = m_Cast.FindAction("South", throwIfNotFound: true);
+        m_Cast_East = m_Cast.FindAction("East", throwIfNotFound: true);
+        m_Cast_West = m_Cast.FindAction("West", throwIfNotFound: true);
     }
 
     ~@GameController()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, GameController.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, GameController.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Cast.enabled, "This will cause a leak and performance issues, GameController.Cast.Disable() has not been called.");
     }
 
     /// <summary>
@@ -431,6 +610,7 @@ public partial class @GameController: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Cast;
     private readonly InputAction m_Player_Menu;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_EnterCast;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -470,6 +650,10 @@ public partial class @GameController: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Interact".
         /// </summary>
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/EnterCast".
+        /// </summary>
+        public InputAction @EnterCast => m_Wrapper.m_Player_EnterCast;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -517,6 +701,9 @@ public partial class @GameController: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @EnterCast.started += instance.OnEnterCast;
+            @EnterCast.performed += instance.OnEnterCast;
+            @EnterCast.canceled += instance.OnEnterCast;
         }
 
         /// <summary>
@@ -549,6 +736,9 @@ public partial class @GameController: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @EnterCast.started -= instance.OnEnterCast;
+            @EnterCast.performed -= instance.OnEnterCast;
+            @EnterCast.canceled -= instance.OnEnterCast;
         }
 
         /// <summary>
@@ -700,6 +890,168 @@ public partial class @GameController: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // Cast
+    private readonly InputActionMap m_Cast;
+    private List<ICastActions> m_CastActionsCallbackInterfaces = new List<ICastActions>();
+    private readonly InputAction m_Cast_ExitCast;
+    private readonly InputAction m_Cast_CyclePrev;
+    private readonly InputAction m_Cast_CycleNext;
+    private readonly InputAction m_Cast_North;
+    private readonly InputAction m_Cast_South;
+    private readonly InputAction m_Cast_East;
+    private readonly InputAction m_Cast_West;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Cast".
+    /// </summary>
+    public struct CastActions
+    {
+        private @GameController m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public CastActions(@GameController wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Cast/ExitCast".
+        /// </summary>
+        public InputAction @ExitCast => m_Wrapper.m_Cast_ExitCast;
+        /// <summary>
+        /// Provides access to the underlying input action "Cast/CyclePrev".
+        /// </summary>
+        public InputAction @CyclePrev => m_Wrapper.m_Cast_CyclePrev;
+        /// <summary>
+        /// Provides access to the underlying input action "Cast/CycleNext".
+        /// </summary>
+        public InputAction @CycleNext => m_Wrapper.m_Cast_CycleNext;
+        /// <summary>
+        /// Provides access to the underlying input action "Cast/North".
+        /// </summary>
+        public InputAction @North => m_Wrapper.m_Cast_North;
+        /// <summary>
+        /// Provides access to the underlying input action "Cast/South".
+        /// </summary>
+        public InputAction @South => m_Wrapper.m_Cast_South;
+        /// <summary>
+        /// Provides access to the underlying input action "Cast/East".
+        /// </summary>
+        public InputAction @East => m_Wrapper.m_Cast_East;
+        /// <summary>
+        /// Provides access to the underlying input action "Cast/West".
+        /// </summary>
+        public InputAction @West => m_Wrapper.m_Cast_West;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Cast; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="CastActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(CastActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="CastActions" />
+        public void AddCallbacks(ICastActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CastActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CastActionsCallbackInterfaces.Add(instance);
+            @ExitCast.started += instance.OnExitCast;
+            @ExitCast.performed += instance.OnExitCast;
+            @ExitCast.canceled += instance.OnExitCast;
+            @CyclePrev.started += instance.OnCyclePrev;
+            @CyclePrev.performed += instance.OnCyclePrev;
+            @CyclePrev.canceled += instance.OnCyclePrev;
+            @CycleNext.started += instance.OnCycleNext;
+            @CycleNext.performed += instance.OnCycleNext;
+            @CycleNext.canceled += instance.OnCycleNext;
+            @North.started += instance.OnNorth;
+            @North.performed += instance.OnNorth;
+            @North.canceled += instance.OnNorth;
+            @South.started += instance.OnSouth;
+            @South.performed += instance.OnSouth;
+            @South.canceled += instance.OnSouth;
+            @East.started += instance.OnEast;
+            @East.performed += instance.OnEast;
+            @East.canceled += instance.OnEast;
+            @West.started += instance.OnWest;
+            @West.performed += instance.OnWest;
+            @West.canceled += instance.OnWest;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="CastActions" />
+        private void UnregisterCallbacks(ICastActions instance)
+        {
+            @ExitCast.started -= instance.OnExitCast;
+            @ExitCast.performed -= instance.OnExitCast;
+            @ExitCast.canceled -= instance.OnExitCast;
+            @CyclePrev.started -= instance.OnCyclePrev;
+            @CyclePrev.performed -= instance.OnCyclePrev;
+            @CyclePrev.canceled -= instance.OnCyclePrev;
+            @CycleNext.started -= instance.OnCycleNext;
+            @CycleNext.performed -= instance.OnCycleNext;
+            @CycleNext.canceled -= instance.OnCycleNext;
+            @North.started -= instance.OnNorth;
+            @North.performed -= instance.OnNorth;
+            @North.canceled -= instance.OnNorth;
+            @South.started -= instance.OnSouth;
+            @South.performed -= instance.OnSouth;
+            @South.canceled -= instance.OnSouth;
+            @East.started -= instance.OnEast;
+            @East.performed -= instance.OnEast;
+            @East.canceled -= instance.OnEast;
+            @West.started -= instance.OnWest;
+            @West.performed -= instance.OnWest;
+            @West.canceled -= instance.OnWest;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="CastActions.UnregisterCallbacks(ICastActions)" />.
+        /// </summary>
+        /// <seealso cref="CastActions.UnregisterCallbacks(ICastActions)" />
+        public void RemoveCallbacks(ICastActions instance)
+        {
+            if (m_Wrapper.m_CastActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="CastActions.AddCallbacks(ICastActions)" />
+        /// <seealso cref="CastActions.RemoveCallbacks(ICastActions)" />
+        /// <seealso cref="CastActions.UnregisterCallbacks(ICastActions)" />
+        public void SetCallbacks(ICastActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CastActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CastActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="CastActions" /> instance referencing this action map.
+    /// </summary>
+    public CastActions @Cast => new CastActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Player" which allows adding and removing callbacks.
     /// </summary>
@@ -756,6 +1108,13 @@ public partial class @GameController: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteract(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "EnterCast" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEnterCast(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -785,5 +1144,62 @@ public partial class @GameController: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCancel(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Cast" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="CastActions.AddCallbacks(ICastActions)" />
+    /// <seealso cref="CastActions.RemoveCallbacks(ICastActions)" />
+    public interface ICastActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "ExitCast" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnExitCast(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CyclePrev" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCyclePrev(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CycleNext" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCycleNext(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "North" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNorth(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "South" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSouth(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "East" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEast(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "West" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWest(InputAction.CallbackContext context);
     }
 }

@@ -3,21 +3,18 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// Drives the pause menu shell: open/close, time freeze, and tab switching.
-// Put this on MenuRoot. Front-end only — panels can be empty for now.
-//
-// Reads from your generated GameController wrapper:
-//   Player.Menu   -> open / close (bind to Start/Options)
-//   UI.Cancel     -> close while open (Circle)
-//   UI.Navigate   -> cycle tabs left/right on the tab bar
+// Drives the pause menu shell. IMPORTANT: this does NOT create/enable its own copy
+// of the UI action map — that conflicts with the EventSystem's navigation. It only
+// enables the Player map (for the Menu button) and READS the shared UI actions by
+// reference, so the EventSystem stays the sole owner of UI navigation.
 public class MenuController : MonoBehaviour
 {
     [Header("Root")]
-    [SerializeField] private GameObject menuRoot;   // toggled on/off (defaults to this object)
+    [SerializeField] private GameObject menuRoot;
 
     [Header("Tabs — panels and their buttons, same order")]
-    [SerializeField] private GameObject[] panels;    // Journal, Map, Equipment, Spellbook
-    [SerializeField] private Button[] tabButtons;    // Tab_Journal, Tab_Map, ... (same order)
+    [SerializeField] private GameObject[] panels;
+    [SerializeField] private Button[] tabButtons;
 
     [Header("Selection")]
     [SerializeField] private GameObject firstSelected;
@@ -25,7 +22,11 @@ public class MenuController : MonoBehaviour
     private GameController controls;
     private int currentTab;
     private bool isOpen;
-    private bool navLatched;   // so one stick push = one tab step
+    private bool navLatched;
+
+    public bool InContentMode { get; set; }
+    public bool IsOpen => isOpen;
+    public int CurrentTab => currentTab;
 
     void Awake()
     {
@@ -34,26 +35,26 @@ public class MenuController : MonoBehaviour
         menuRoot.SetActive(false);
     }
 
-    // Menu lives in the Player map; Cancel/Navigate in the UI map — enable both.
-    void OnEnable() { controls?.Player.Enable(); controls?.UI.Enable(); }
-    void OnDisable() { controls?.Player.Disable(); controls?.UI.Disable(); }
+    // Only the Player map here. The UI map is owned/enabled by the EventSystem.
+    void OnEnable() { controls?.Player.Enable(); }
+    void OnDisable() { controls?.Player.Disable(); }
     void OnDestroy() { controls?.Dispose(); }
 
     void Update()
     {
-        // Start/Options toggles the menu open and closed.
         if (controls.Player.Menu.WasPressedThisFrame())
         {
             if (isOpen) Close(); else Open();
             return;
         }
-
         if (!isOpen) return;
 
-        // Circle backs out while open.
+        // Read UI actions WITHOUT enabling our own copy — read the action's live value.
+        // (These actions are enabled by the EventSystem, so ReadValue works.)
         if (controls.UI.Cancel.WasPressedThisFrame()) { Close(); return; }
 
-        // Push Navigate left/right to cycle tabs (latched so it steps once per push).
+        if (InContentMode) return;
+
         float x = controls.UI.Navigate.ReadValue<Vector2>().x;
         if (Mathf.Abs(x) < 0.5f) navLatched = false;
         else if (!navLatched)
@@ -66,6 +67,7 @@ public class MenuController : MonoBehaviour
     public void Open()
     {
         isOpen = true;
+        InContentMode = false;
         menuRoot.SetActive(true);
         Time.timeScale = 0f;
         ShowTab(currentTab);
@@ -75,6 +77,7 @@ public class MenuController : MonoBehaviour
     public void Close()
     {
         isOpen = false;
+        InContentMode = false;
         Time.timeScale = 1f;
         menuRoot.SetActive(false);
     }
@@ -98,4 +101,32 @@ public class MenuController : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         if (firstSelected != null) EventSystem.current.SetSelectedGameObject(firstSelected);
     }
+
+    public void SelectCurrentTab()
+    {
+        if (EventSystem.current == null) return;
+        if (tabButtons != null && currentTab < tabButtons.Length && tabButtons[currentTab] != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(tabButtons[currentTab].gameObject);
+        }
+    }
+
+    public void CycleTab(int dir) => ShowTab(currentTab + dir);
+
+    public IMenuPanel GetCurrentPanelInterface()
+    {
+        if (panels == null || currentTab >= panels.Length || panels[currentTab] == null) return null;
+        return panels[currentTab].GetComponent<IMenuPanel>();
+    }
+
+    public GameObject GetCurrentPanelFirstSelectable()
+    {
+        if (panels == null || currentTab >= panels.Length || panels[currentTab] == null) return null;
+        var sel = panels[currentTab].GetComponentInChildren<Selectable>(false);
+        return sel != null ? sel.gameObject : null;
+    }
+
+    // Read the current Navigate value from the SHARED (EventSystem-owned) UI action.
+    public Vector2 ReadNavigate() => controls.UI.Navigate.ReadValue<Vector2>();
 }

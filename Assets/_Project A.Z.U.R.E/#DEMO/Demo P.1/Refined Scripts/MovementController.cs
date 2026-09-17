@@ -263,8 +263,8 @@ public class MovementController : MonoBehaviour
 
     void HandleClimb()
     {
-        if (!isClimbing && IsTouchingClimbable && !IsGrounded &&
-            (Mathf.Abs(input.VerticalInput) > 0.01f || input.GrabHeld))
+        // LATCH: press grab while near a climbable surface (works grounded or not).
+        if (!isClimbing && IsTouchingClimbable && input.GrabPressed)
         {
             isClimbing = true;
             currentJumpCount = 0;
@@ -273,8 +273,15 @@ public class MovementController : MonoBehaviour
 
         if (!isClimbing) return;
 
-        if (!IsTouchingClimbable || IsGrounded) { isClimbing = false; return; }
+        // STAY only while the grab button is HELD and still touching the surface.
+        // Release the button, leave the surface, or jump off -> drop.
+        if (!input.GrabHeld || !IsTouchingClimbable)
+        {
+            isClimbing = false;
+            return;
+        }
 
+        // Jump off the climb surface.
         if (input.JumpPressed) { isClimbing = false; ExecuteJump(); }
     }
 

@@ -29,4 +29,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/CabinINT2.unity
     guid: d968c835ab1998c42b3978e719dc2e08
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/_Project A.Z.U.R.E/#DEMO/Demo P.1/Scenes/Sandbox.unity
+    guid: dbde2d9381192ac46af72068ce83429c
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 77b4050eca05a404b896e548ef10320f, type: 3}
