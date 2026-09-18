@@ -18,5 +18,5 @@ MonoBehaviour:
   description: Warp back to safety.
   inputSequence: 000000000100000002000000
   cooldown: 3
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: 3d0ec5e05c338b543a08f373f27818b6, type: 2}
   requirements: []

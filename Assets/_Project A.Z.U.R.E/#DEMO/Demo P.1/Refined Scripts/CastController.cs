@@ -1,87 +1,148 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-// The bullet-time combo caster, now routed through SpellcasterController.
-// Hold the cast key -> time slows -> tap the input keys to build a sequence ->
-// release (or timer) -> the sequence is matched to a loadout spell and cast
-// (respecting its cooldown). Put on the player alongside SpellcasterController.
+// The battle casting flow:
+//   R1 (Player map) -> enter cast mode: enable the Cast map, show cast UI, slow time.
+//   L1 / L2 -> cycle through the deck's spells (the highlighted one is "locked").
+//   Face buttons (North/South/East/West) -> perform the locked spell's sequence.
+//   On sequence match -> spell auto-fires (via SpellcasterController), cast mode exits.
+//   R1 (Cast map) -> exit/cancel anytime.
+//
+// Put on the player alongside SpellcasterController. Requires a GameController asset
+// with a "Cast" action map (ExitCast, CyclePrev, CycleNext, North, South, East, West)
+// and an "EnterCast" action in the Player map.
 public class CastController : MonoBehaviour
 {
-    [Header("Cast window")]
-    [SerializeField] private KeyCode castKey = KeyCode.Space;
-    [SerializeField] private float slowFactor = 0.15f;
-    [SerializeField] private float maxCastSeconds = 3f;
+    [Header("Cast UI (optional)")]
+    [SerializeField] private CastModeUI castUI;          // the above-player UI element
 
-    [Header("Cast inputs")]
-    [SerializeField] private KeyCode fireKey = KeyCode.J;
-    [SerializeField] private KeyCode frostKey = KeyCode.K;
-    [SerializeField] private KeyCode boltKey = KeyCode.L;
-
+    private GameController controls;
     private SpellcasterController caster;
+
     private bool casting;
-    private float windowStartUnscaled;
+    private int selectedIndex;                           // which deck spell is locked
     private readonly List<CastInput> buffer = new List<CastInput>();
-    private float defaultFixedDelta;
+
+    // Events for UI/feedback.
+    public event Action<bool> CastModeChanged;           // (entered?)
+    public event Action<SpellDefinition> SelectionChanged;
+    public event Action<List<CastInput>> SequenceChanged;
 
     void Awake()
     {
+        controls = new GameController();
         caster = GetComponent<SpellcasterController>();
-        defaultFixedDelta = Time.fixedDeltaTime;
-        if (caster == null)
-            Debug.LogError("[CastController] No SpellcasterController on the player.", this);
+        if (caster == null) Debug.LogError("[CastController] No SpellcasterController.", this);
+        if (castUI == null) castUI = CastModeUI.Instance;   // find the persistent HUD if not assigned
     }
 
-    void Update()
+    void OnEnable()
     {
-        if (!casting)
-        {
-            if (Input.GetKeyDown(castKey)) BeginCast();
-            return;
-        }
-
-        CaptureInputs();
-
-        bool released = !Input.GetKey(castKey);
-        bool timeUp = Time.unscaledTime - windowStartUnscaled >= maxCastSeconds;
-        if (released || timeUp) EndCast();
+        controls.Player.Enable();     // EnterCast lives here
+        // Cast map is enabled only while casting.
+        controls.Player.EnterCast.performed += OnEnterCast;
+        controls.Cast.ExitCast.performed += OnExitCast;
+        controls.Cast.CyclePrev.performed += _ => Cycle(-1);
+        controls.Cast.CycleNext.performed += _ => Cycle(1);
+        controls.Cast.North.performed += _ => Input(CastInput.North);
+        controls.Cast.South.performed += _ => Input(CastInput.South);
+        controls.Cast.East.performed += _ => Input(CastInput.East);
+        controls.Cast.West.performed += _ => Input(CastInput.West);
     }
 
-    public void BeginCast()
+    void OnDisable()
     {
+        controls.Player.EnterCast.performed -= OnEnterCast;
+        controls.Cast.ExitCast.performed -= OnExitCast;
+        controls.Player.Disable();
+        controls.Cast.Disable();
+    }
+
+    void OnDestroy() => controls.Dispose();
+
+    // ---- enter / exit ----
+
+    void OnEnterCast(InputAction.CallbackContext _)
+    {
+        if (casting) return;
+        EnterCast();
+    }
+
+    void OnExitCast(InputAction.CallbackContext _) => ExitCast();
+
+    void EnterCast()
+    {
+        if (caster == null || caster.Loadout.Count == 0) return;   // no spells, nothing to cast
+
+        if (castUI == null) castUI = CastModeUI.Instance;
         casting = true;
+        controls.Cast.Enable();                 // cast controls live now
+        selectedIndex = 0;
         buffer.Clear();
-        windowStartUnscaled = Time.unscaledTime;
-        Time.timeScale = slowFactor;
-        Time.fixedDeltaTime = defaultFixedDelta * slowFactor;
+
+        if (castUI != null) castUI.Show(caster.Loadout, selectedIndex);
+        CastModeChanged?.Invoke(true);
+        SelectionChanged?.Invoke(Selected);
     }
 
-    void CaptureInputs()
+    void ExitCast()
     {
-        if (Input.GetKeyDown(fireKey))  Append(CastInput.Fire);
-        if (Input.GetKeyDown(frostKey)) Append(CastInput.Frost);
-        if (Input.GetKeyDown(boltKey))  Append(CastInput.Bolt);
-    }
-
-    void Append(CastInput input)
-    {
-        buffer.Add(input);
-        Debug.Log($"[Cast] {string.Join(" ", buffer)}");
-    }
-
-    void EndCast()
-    {
+        if (!casting) return;
         casting = false;
-        Time.timeScale = 1f;
-        Time.fixedDeltaTime = defaultFixedDelta;
+        controls.Cast.Disable();
+        buffer.Clear();
 
-        // Match the input sequence to a loadout spell and cast it.
-        if (caster != null && buffer.Count > 0)
+        if (castUI != null) castUI.Hide();
+        CastModeChanged?.Invoke(false);
+    }
+
+    // ---- selection ----
+
+    SpellDefinition Selected =>
+        (caster != null && selectedIndex >= 0 && selectedIndex < caster.Loadout.Count)
+            ? caster.Loadout[selectedIndex] : null;
+
+    void Cycle(int dir)
+    {
+        if (!casting || caster.Loadout.Count == 0) return;
+        int n = caster.Loadout.Count;
+        selectedIndex = (selectedIndex + dir + n) % n;
+        buffer.Clear();                          // switching spells resets the sequence
+        if (castUI != null) castUI.SetSelected(selectedIndex);
+        SelectionChanged?.Invoke(Selected);
+        SequenceChanged?.Invoke(buffer);
+    }
+
+    // ---- sequence input ----
+
+    void Input(CastInput btn)
+    {
+        if (!casting) return;
+        var spell = Selected;
+        if (spell == null) return;
+
+        buffer.Add(btn);
+        SequenceChanged?.Invoke(buffer);
+
+        // Compare buffer against the locked spell's sequence.
+        var seq = spell.inputSequence;
+
+        // If the buffer no longer matches the start of the sequence, reset it.
+        for (int i = 0; i < buffer.Count; i++)
         {
-            var spell = caster.MatchSequence(buffer);
-            if (spell != null) caster.TryCast(spell);
-            else Debug.Log("[Cast] No spell matches that sequence.");
+            if (i >= seq.Count || buffer[i] != seq[i]) { buffer.Clear(); if (castUI != null) castUI.ShowSequenceProgress(buffer); return; }
         }
 
-        buffer.Clear();
+        if (castUI != null) castUI.ShowSequenceProgress(buffer);
+
+        // Full match -> fire.
+        if (buffer.Count == seq.Count)
+        {
+            bool fired = caster.TryCast(spell);
+            buffer.Clear();
+            if (fired) ExitCast();               // successful cast leaves cast mode
+        }
     }
 }

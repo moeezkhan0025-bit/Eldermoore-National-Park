@@ -63,6 +63,20 @@ public class MovementController : MonoBehaviour
     float warpRechargeTimer;
     float warpLockTimer;
     public int WarpCharges => currentWarpCharges;
+    public float WarpDistance => warpDistance;
+
+    // Public: warp the player a given distance in their facing direction, clamped
+    // against warp obstacles (used by spells like Recall). Returns where they landed.
+    public Vector2 WarpInFacing(float distance)
+    {
+        Vector2 dir = new Vector2(FacingRight ? 1f : -1f, 0f);
+        float dist = distance;
+        RaycastHit2D hit = Physics2D.Raycast(rb.position, dir, distance, warpObstacleLayer);
+        if (hit.collider != null) dist = Mathf.Max(0f, hit.distance - warpSkin);
+        rb.position = rb.position + dir * dist;
+        rb.velocity = Vector2.zero;
+        return rb.position;
+    }
 
     [Header("Drop Through")]
     [SerializeField] string platformLayer = "OneWayPlatform";
