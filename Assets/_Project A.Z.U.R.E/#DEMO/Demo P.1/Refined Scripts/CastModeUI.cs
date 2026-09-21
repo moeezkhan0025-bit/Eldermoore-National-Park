@@ -14,6 +14,11 @@ public class CastModeUI : MonoBehaviour
     [Header("The card template")]
     [SerializeField] private SpellCardUI card;      // the reusable card that renders the spell
 
+    [Header("Message (e.g. No enemy found)")]
+    [SerializeField] private TMPro.TMP_Text messageText;
+    [SerializeField] private float messageDuration = 1.5f;
+    private float messageHideAt;
+
     [Header("Cycle prompts (optional)")]
     [SerializeField] private GameObject leftPrompt;  // L1 arrow (shown if more than one spell)
     [SerializeField] private GameObject rightPrompt; // L2 arrow
@@ -65,5 +70,20 @@ public class CastModeUI : MonoBehaviour
         bool many = deck != null && deck.Count > 1;
         if (leftPrompt != null) leftPrompt.SetActive(many);
         if (rightPrompt != null) rightPrompt.SetActive(many);
+    }
+
+    // Pop a short message (like "No enemy found") on the cast UI.
+    public void ShowMessage(string msg)
+    {
+        if (messageText == null || string.IsNullOrEmpty(msg)) return;
+        messageText.text = msg;
+        messageText.gameObject.SetActive(true);
+        messageHideAt = Time.unscaledTime + messageDuration;
+    }
+
+    void Update()
+    {
+        if (messageText != null && messageText.gameObject.activeSelf && Time.unscaledTime >= messageHideAt)
+            messageText.gameObject.SetActive(false);
     }
 }

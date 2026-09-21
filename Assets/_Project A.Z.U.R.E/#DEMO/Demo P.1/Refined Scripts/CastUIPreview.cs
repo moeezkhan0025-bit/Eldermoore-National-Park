@@ -22,7 +22,7 @@ public class CastUIPreview : MonoBehaviour
             Debug.Log("[CastUIPreview] Showing card 0. [ ] to cycle, O to hide.");
         }
         if (Input.GetKeyDown(KeyCode.RightBracket)) { index = Next(1); ui.SetSelected(index); }
-        if (Input.GetKeyDown(KeyCode.LeftBracket))  { index = Next(-1); ui.SetSelected(index); }
+        if (Input.GetKeyDown(KeyCode.LeftBracket)) { index = Next(-1); ui.SetSelected(index); }
         if (Input.GetKeyDown(KeyCode.O)) ui.Hide();
     }
 

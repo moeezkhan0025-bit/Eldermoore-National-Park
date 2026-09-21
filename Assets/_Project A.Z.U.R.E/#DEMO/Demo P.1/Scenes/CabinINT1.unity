@@ -168,10 +168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb0593a0977a5aa4c9d6b9a580b51ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  promptText: Interact
   destination: {fileID: 2050143979}
-  activateKey: 101
   exitPoint: {fileID: 1598475425}
-  prompt: {fileID: 0}
 --- !u!61 &47653537
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -659,10 +658,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf88a39c5f5a78d47a0a0ae6fc82b333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  promptText: Interact
   targetScene: Game
   spawnPointId: FromCabin1
-  interactKey: 101
-  prompt: {fileID: 0}
 --- !u!61 &296433876
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -798,10 +796,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf88a39c5f5a78d47a0a0ae6fc82b333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  promptText: Interact
   targetScene: CabinINT2
   spawnPointId: FromCabin1
-  interactKey: 101
-  prompt: {fileID: 0}
 --- !u!61 &543245899
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -892,10 +889,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf88a39c5f5a78d47a0a0ae6fc82b333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  promptText: Interact
   targetScene: CabinINT2
   spawnPointId: FromCabin1Back
-  interactKey: 101
-  prompt: {fileID: 0}
 --- !u!61 &679499254
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1019,7 +1015,7 @@ Transform:
   m_GameObject: {fileID: 688974036}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 37, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1265,7 +1261,7 @@ Transform:
   m_GameObject: {fileID: 1147495668}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.3, y: -140.7, z: 0}
+  m_LocalPosition: {x: -0, y: -137.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1590,10 +1586,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb0593a0977a5aa4c9d6b9a580b51ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  promptText: Interact
   destination: {fileID: 47653536}
-  activateKey: 101
   exitPoint: {fileID: 1216321504}
-  prompt: {fileID: 0}
 --- !u!61 &2050143980
 BoxCollider2D:
   m_ObjectHideFlags: 0

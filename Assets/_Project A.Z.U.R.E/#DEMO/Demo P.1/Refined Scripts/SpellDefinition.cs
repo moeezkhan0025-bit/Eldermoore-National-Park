@@ -19,6 +19,9 @@ public class SpellDefinition : ScriptableObject
     public List<CastInput> inputSequence = new List<CastInput>();
     [Min(0f)] public float cooldown = 3f;
 
+    [Header("Charge visual (optional — hovers during input, e.g. Bolt's missile)")]
+    public HomingProjectile chargeVisual;
+
     [Header("Effect")]
     public SpellEffect effect;   // Repulse / Bolt / Recall, etc.
 

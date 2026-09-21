@@ -24,6 +24,8 @@ public class CastController : MonoBehaviour
     private bool casting;
     private int selectedIndex;                           // which deck spell is locked
     private readonly List<CastInput> buffer = new List<CastInput>();
+    private HomingProjectile hoverMissile;
+    [SerializeField] private Vector3 chargeOffset = new Vector3(1f, 0.5f, 0f);
 
     // Events for UI/feedback.
     public event Action<bool> CastModeChanged;           // (entered?)
@@ -93,6 +95,7 @@ public class CastController : MonoBehaviour
         casting = false;
         controls.Cast.Disable();
         buffer.Clear();
+        DismissHover();
 
         if (castUI != null) castUI.Hide();
         CastModeChanged?.Invoke(false);
@@ -109,7 +112,8 @@ public class CastController : MonoBehaviour
         if (!casting || caster.Loadout.Count == 0) return;
         int n = caster.Loadout.Count;
         selectedIndex = (selectedIndex + dir + n) % n;
-        buffer.Clear();                          // switching spells resets the sequence
+        buffer.Clear();
+        DismissHover();                          // switching spells resets the sequence
         if (castUI != null) castUI.SetSelected(selectedIndex);
         SelectionChanged?.Invoke(Selected);
         SequenceChanged?.Invoke(buffer);
@@ -120,8 +124,24 @@ public class CastController : MonoBehaviour
     void Input(CastInput btn)
     {
         if (!casting) return;
+        try { InputInner(btn); }
+        catch (System.Exception e) { Debug.LogError($"[CastController] Input error: {e}"); }
+    }
+
+    void InputInner(CastInput btn)
+    {
         var spell = Selected;
         if (spell == null) return;
+
+        // First input of the sequence -> spawn the charge visual (e.g. Bolt's hovering missile).
+        if (buffer.Count == 0 && spell.chargeVisual != null && hoverMissile == null)
+        {
+            var facingOffset = chargeOffset;
+            var mc = GetComponent<MovementController>();
+            if (mc != null && !mc.FacingRight) facingOffset.x = -facingOffset.x;
+            hoverMissile = Instantiate(spell.chargeVisual);
+            hoverMissile.Hover(transform, facingOffset);
+        }
 
         buffer.Add(btn);
         SequenceChanged?.Invoke(buffer);
@@ -140,9 +160,24 @@ public class CastController : MonoBehaviour
         // Full match -> fire.
         if (buffer.Count == seq.Count)
         {
-            bool fired = caster.TryCast(spell);
+            bool fired = caster.TryCast(spell, hoverMissile);   // pass the hovering missile
             buffer.Clear();
-            if (fired) ExitCast();               // successful cast leaves cast mode
+            if (castUI != null) castUI.ShowSequenceProgress(buffer);
+            if (fired)
+            {
+                hoverMissile = null;             // the effect took ownership (launched it)
+                ExitCast();
+            }
+            else
+            {
+                if (hoverMissile != null) { hoverMissile.Dismiss(); hoverMissile = null; }  // no target -> vanish
+                if (castUI != null) castUI.ShowMessage(caster.LastCastMessage);
+            }
         }
+    }
+
+    void DismissHover()
+    {
+        if (hoverMissile != null) { hoverMissile.Dismiss(); hoverMissile = null; }
     }
 }

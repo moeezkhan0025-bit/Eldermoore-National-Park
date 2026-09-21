@@ -5,6 +5,10 @@ using UnityEngine;
 // can react (e.g. "no enemy found" for an offensive spell with no target).
 public abstract class SpellEffect : ScriptableObject
 {
+    // Set by SpellcasterController just before Cast(): the hovering charge visual
+    // (e.g. Bolt's missile) to fire, if this spell spawned one.
+    public static HomingProjectile PendingChargeVisual;
+
     // Return true if the effect actually did something; false + a message if not.
     public abstract CastResult Cast(GameObject caster);
 }

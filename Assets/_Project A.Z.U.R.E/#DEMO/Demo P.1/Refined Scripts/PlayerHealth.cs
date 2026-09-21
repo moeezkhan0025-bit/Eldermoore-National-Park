@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private bool startFull = true;
 
     private PlayerStats stats;
+    private PlayerShield shield;
     public float Current { get; private set; }
     public float Max => stats.Get(StatType.MaxHealth);
 
@@ -20,11 +21,12 @@ public class PlayerHealth : MonoBehaviour
 
     // Hearts read-outs for the HUD.
     public float CurrentHearts => Current / heartValue;
-    public int   MaxHearts     => Mathf.CeilToInt(Max / heartValue);
+    public int MaxHearts => Mathf.CeilToInt(Max / heartValue);
 
     void Awake()
     {
         stats = GetComponent<PlayerStats>();
+        shield = GetComponent<PlayerShield>();
     }
 
     void Start()
@@ -43,6 +45,13 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(float amount)
     {
         if (amount <= 0f || Current <= 0f) return;
+
+        // Shield soaks damage first; only the leftover hits health.
+        if (shield != null && shield.IsActive)
+        {
+            amount = shield.Absorb(amount);
+            if (amount <= 0f) return;   // fully absorbed
+        }
         Current = Mathf.Max(0f, Current - amount);
         HealthChanged?.Invoke(Current, Max);
         if (Current <= 0f) Died?.Invoke();

@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3677ac2825a87924cbfeff57531ac57e, type: 3}
   m_Name: Spell_Recall
   m_EditorClassIdentifier: 
-  id: spell_recall
+  id: Warp Step
   displayName: Recall
   icon: {fileID: 1902806948, guid: e3b73c015afa2f547ac670c68bcd6199, type: 3}
-  description: Warp back to safety.
+  description: Warp Forward
   inputSequence: 000000000100000002000000
   cooldown: 3
+  chargeVisual: {fileID: 0}
   effect: {fileID: 11400000, guid: 3d0ec5e05c338b543a08f373f27818b6, type: 2}
   requirements: []

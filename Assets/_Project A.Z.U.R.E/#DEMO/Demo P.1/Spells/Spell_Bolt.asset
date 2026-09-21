@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Spell_Bolt
   m_EditorClassIdentifier: 
   id: spell_bolt
-  displayName: Bolt
+  displayName: Icicle
   icon: {fileID: 1381100476, guid: e3b73c015afa2f547ac670c68bcd6199, type: 3}
   description: Strikes the nearest enemy.
   inputSequence: 000000000000000000000000
   cooldown: 3
+  chargeVisual: {fileID: 9190392881913344333, guid: 9b77ad713e8be11449af23413c7dae58, type: 3}
   effect: {fileID: 11400000, guid: 099f529426fc00f4286d02125bf47368, type: 2}
   requirements: []

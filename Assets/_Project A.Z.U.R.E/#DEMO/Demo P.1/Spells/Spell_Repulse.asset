@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Spell_Repulse
   m_EditorClassIdentifier: 
   id: spell_repulse
-  displayName: Repulse
+  displayName: Shield
   icon: {fileID: 1272586775, guid: e3b73c015afa2f547ac670c68bcd6199, type: 3}
-  description: Push enemies back
+  description: Shield against 20 DMG
   inputSequence: 0100000001000000
   cooldown: 3
+  chargeVisual: {fileID: 0}
   effect: {fileID: 11400000, guid: 70c003e13eddd464aa53f78b4b26db46, type: 2}
   requirements: []

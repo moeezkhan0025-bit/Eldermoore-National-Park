@@ -68,14 +68,33 @@ public class SpellcasterController : MonoBehaviour
 
     // Attempt to cast a spell: checks cooldown (and later, materials), runs the
     // effect, and starts the cooldown. Returns true if it fired.
-    public bool TryCast(SpellDefinition spell)
+    // Last failure message (e.g. "No enemy found"), for the UI to show.
+    public string LastCastMessage { get; private set; }
+
+    public bool TryCast(SpellDefinition spell) => TryCast(spell, null);
+
+    public bool TryCast(SpellDefinition spell, HomingProjectile preSpawned)
     {
+        LastCastMessage = null;
         if (spell == null || spell.effect == null) return false;
-        if (IsOnCooldown(spell)) { Debug.Log($"[Cast] {spell.displayName} on cooldown."); return false; }
+
+        if (IsOnCooldown(spell))
+        {
+            LastCastMessage = $"{spell.displayName} on cooldown";
+            return false;
+        }
 
         // (Material checks would go here later, using spell.requirements.)
 
-        spell.effect.Cast(gameObject);
+        SpellEffect.PendingChargeVisual = preSpawned;   // hand the hovering missile to the effect
+        CastResult result = spell.effect.Cast(gameObject);
+        SpellEffect.PendingChargeVisual = null;
+        if (!result.success)
+        {
+            LastCastMessage = result.message;      // e.g. "No enemy found" — don't start cooldown
+            return false;
+        }
+
         readyAt[spell.id] = Time.unscaledTime + spell.cooldown;
         Debug.Log($"[Cast] {spell.displayName} cast. Cooldown {spell.cooldown}s.");
         return true;

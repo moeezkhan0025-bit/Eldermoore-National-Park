@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c1b8c4884307bc4a86df6bfad796092, type: 3}
   m_Name: Bolt
   m_EditorClassIdentifier: 
-  range: 10
-  damage: 20
+  range: 1000
+  damage: 10
   enemyTag: Enemy
-  projectilePrefab: {fileID: 9190392881913344333, guid: 9b77ad713e8be11449af23413c7dae58, type: 3}
+  fallbackProjectile: {fileID: 9190392881913344333, guid: 9b77ad713e8be11449af23413c7dae58, type: 3}
   spawnForwardOffset: 0.8
