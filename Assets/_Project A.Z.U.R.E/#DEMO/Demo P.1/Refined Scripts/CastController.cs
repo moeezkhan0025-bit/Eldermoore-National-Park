@@ -25,7 +25,9 @@ public class CastController : MonoBehaviour
     private int selectedIndex;                           // which deck spell is locked
     private readonly List<CastInput> buffer = new List<CastInput>();
     private HomingProjectile hoverMissile;
+    private int interferenceCount;   // extra inputs the player must add, set by enemies
     [SerializeField] private Vector3 chargeOffset = new Vector3(1f, 0.5f, 0f);
+    [SerializeField] private Transform castSpawnPoint;   // optional: an empty child placed where the projectile spawns
 
     // Events for UI/feedback.
     public event Action<bool> CastModeChanged;           // (entered?)
@@ -95,6 +97,7 @@ public class CastController : MonoBehaviour
         casting = false;
         controls.Cast.Disable();
         buffer.Clear();
+        ClearInterference();
         DismissHover();
 
         if (castUI != null) castUI.Hide();
@@ -133,14 +136,11 @@ public class CastController : MonoBehaviour
         var spell = Selected;
         if (spell == null) return;
 
-        // First input of the sequence -> spawn the charge visual (e.g. Bolt's hovering missile).
-        if (buffer.Count == 0 && spell.chargeVisual != null && hoverMissile == null)
+        // If the selected spell is on cooldown, ignore inputs (can't cast it).
+        if (caster != null && caster.CooldownRemaining(spell) > 0f)
         {
-            var facingOffset = chargeOffset;
-            var mc = GetComponent<MovementController>();
-            if (mc != null && !mc.FacingRight) facingOffset.x = -facingOffset.x;
-            hoverMissile = Instantiate(spell.chargeVisual);
-            hoverMissile.Hover(transform, facingOffset);
+            DismissHover();
+            return;
         }
 
         buffer.Add(btn);
@@ -149,24 +149,61 @@ public class CastController : MonoBehaviour
         // Compare buffer against the locked spell's sequence.
         var seq = spell.inputSequence;
 
-        // If the buffer no longer matches the start of the sequence, reset it.
+        // If the buffer no longer matches the start of the sequence, reset it
+        // (and dismiss any charge visual, since the combo was broken).
         for (int i = 0; i < buffer.Count; i++)
         {
-            if (i >= seq.Count || buffer[i] != seq[i]) { buffer.Clear(); if (castUI != null) castUI.ShowSequenceProgress(buffer); return; }
+            if (i >= seq.Count || buffer[i] != seq[i])
+            {
+                buffer.Clear();
+                DismissHover();                       // wrong input -> no missile
+                if (castUI != null) castUI.ShowSequenceProgress(buffer);
+                return;
+            }
+        }
+
+        // The input was CORRECT. If this was the first correct input, spawn the
+        // charge visual now (not on any random key — only on the right first press).
+        if (buffer.Count == 1 && spell.chargeVisual != null && hoverMissile == null)
+        {
+            hoverMissile = Instantiate(spell.chargeVisual);
+            if (castSpawnPoint != null)
+            {
+                hoverMissile.HoverAt(castSpawnPoint);
+            }
+            else
+            {
+                var mc = GetComponent<MovementController>();
+                var facingOffset = chargeOffset;
+                if (mc != null && !mc.FacingRight) facingOffset.x = -facingOffset.x;
+                hoverMissile.Hover(transform, facingOffset);
+            }
         }
 
         if (castUI != null) castUI.ShowSequenceProgress(buffer);
 
-        // Full match -> fire.
-        if (buffer.Count == seq.Count)
+        // Full match -> fire. Interference requires EXTRA inputs beyond the sequence:
+        // the player must press (sequence length + interferenceCount) correct-so-far.
+        int required = seq.Count + interferenceCount;
+        if (buffer.Count >= seq.Count && buffer.Count < required)
+        {
+            // sequence matched so far but interference demands more presses — keep waiting.
+            if (castUI != null) castUI.ShowSequenceProgress(buffer);
+            return;
+        }
+        if (buffer.Count == required)
         {
             bool fired = caster.TryCast(spell, hoverMissile);   // pass the hovering missile
             buffer.Clear();
             if (castUI != null) castUI.ShowSequenceProgress(buffer);
             if (fired)
             {
-                hoverMissile = null;             // the effect took ownership (launched it)
-                ExitCast();
+                hoverMissile = null;        // effect launched it
+                ClearInterference();
+                // STAY in cast mode so the player can cast again. Just reset the
+                // sequence; the fired spell now shows greyed (on cooldown) on its card.
+                buffer.Clear();
+                if (castUI != null) castUI.ShowSequenceProgress(buffer);
             }
             else
             {
@@ -180,4 +217,10 @@ public class CastController : MonoBehaviour
     {
         if (hoverMissile != null) { hoverMissile.Dismiss(); hoverMissile = null; }
     }
+
+    // --- Enemy interference: force the player to input extra buttons this cast ---
+    public bool IsCasting => casting;
+    public void AddInterference(int extra) { interferenceCount += Mathf.Max(0, extra); }
+    public void ClearInterference() { interferenceCount = 0; }
+    public int InterferenceCount => interferenceCount;
 }

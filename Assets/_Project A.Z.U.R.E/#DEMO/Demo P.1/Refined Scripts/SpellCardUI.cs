@@ -3,9 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// The card template. Renders a spell: art, name, effect, and a ROW OF BUTTON
-// ICON IMAGES for its sequence. Icons brighten/darken to show input progress.
-// Build once as a prefab; CastModeUI binds a SpellDefinition to it.
+// The card template. Renders a spell (art, name, sequence icons, effect) and greys
+// the whole card out via a CanvasGroup while the spell is on cooldown.
 public class SpellCardUI : MonoBehaviour
 {
     [Header("Card fields")]
@@ -14,7 +13,6 @@ public class SpellCardUI : MonoBehaviour
     [SerializeField] private TMP_Text cardEffect;
 
     [Header("Sequence icon row")]
-    [Tooltip("One Image per slot — enough for your longest spell sequence.")]
     [SerializeField] private Image[] sequenceIcons;
 
     [Header("Button sprites (assign the 4 face buttons)")]
@@ -23,9 +21,13 @@ public class SpellCardUI : MonoBehaviour
     [SerializeField] private Sprite eastSprite;    // ○
     [SerializeField] private Sprite westSprite;    // □
 
-    [Header("Progress colors")]
-    [SerializeField] private Color pendingColor = Color.white;                 // not pressed
-    [SerializeField] private Color doneColor = new Color(0.4f, 0.4f, 0.4f);    // pressed / darkened
+    [Header("Sequence progress colors")]
+    [SerializeField] private Color pendingColor = Color.white;
+    [SerializeField] private Color doneColor = new Color(0.4f, 0.4f, 0.4f);
+
+    [Header("Cooldown")]
+    [SerializeField] private CanvasGroup dimGroup;      // dims the whole card while on cooldown
+    [SerializeField] private float cooldownAlpha = 0.35f;
 
     private SpellDefinition spell;
 
@@ -66,7 +68,7 @@ public class SpellCardUI : MonoBehaviour
                 sequenceIcons[i].enabled = true;
                 sequenceIcons[i].color = pendingColor;
             }
-            else sequenceIcons[i].enabled = false;   // hide unused slots
+            else sequenceIcons[i].enabled = false;
         }
     }
 
@@ -81,4 +83,20 @@ public class SpellCardUI : MonoBehaviour
         }
         return null;
     }
+
+    // Called each frame while the card is shown: grey the whole card while the
+    // spell is on cooldown, restore it when ready.
+    public void UpdateCooldown(SpellcasterController caster)
+    {
+        if (spell == null) return;
+        if (caster == null) { Debug.LogWarning("[CardCD] caster is NULL — CastModeUI didn't resolve it"); return; }
+        if (dimGroup == null) { Debug.LogWarning("[CardCD] dimGroup NOT assigned on SpellCardUI!"); return; }
+        float rem = caster.CooldownRemaining(spell);
+        bool onCd = rem > 0f;
+        dimGroup.alpha = onCd ? cooldownAlpha : 1f;
+        if (onCd) Debug.Log($"[CardCD] {spell.displayName} rem={rem:0.0}s, set alpha={dimGroup.alpha}");
+    }
+
+    public bool IsOnCooldown(SpellcasterController caster) =>
+        spell != null && caster != null && caster.CooldownRemaining(spell) > 0f;
 }

@@ -16,4 +16,4 @@ MonoBehaviour:
   damage: 10
   enemyTag: Enemy
   fallbackProjectile: {fileID: 9190392881913344333, guid: 9b77ad713e8be11449af23413c7dae58, type: 3}
-  spawnForwardOffset: 0.8
+  spawnForwardOffset: 1000

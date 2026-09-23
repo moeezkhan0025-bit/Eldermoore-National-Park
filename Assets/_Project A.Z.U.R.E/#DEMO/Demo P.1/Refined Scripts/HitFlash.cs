@@ -17,13 +17,15 @@ public class HitFlash : MonoBehaviour
     {
         if (sr == null) sr = GetComponentInChildren<SpriteRenderer>();
         if (sr != null) baseColor = sr.color;
+        else Debug.LogWarning($"[HitFlash] {name}: no SpriteRenderer found — can't flash.", this);
     }
 
-    void OnEnable()  { GetComponent<Health>().Damaged += Flash; }
+    void OnEnable() { GetComponent<Health>().Damaged += Flash; }
     void OnDisable() { GetComponent<Health>().Damaged -= Flash; }
 
     void Flash()
     {
+        Debug.Log($"[HitFlash] {name} Flash() called.");
         if (sr == null) return;
         if (routine != null) StopCoroutine(routine);
         routine = StartCoroutine(FlashRoutine());

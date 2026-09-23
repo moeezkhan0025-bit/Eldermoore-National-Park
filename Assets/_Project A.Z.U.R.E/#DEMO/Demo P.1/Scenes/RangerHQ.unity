@@ -1420,7 +1420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf88a39c5f5a78d47a0a0ae6fc82b333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Interact
+  prompt: {fileID: 0}
   targetScene: Game
   spawnPointId: FromRangerHQ
 --- !u!1 &2036533187
@@ -1539,9 +1539,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6251385511120525798, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6447083568293662406, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
       propertyPath: m_Name
       value: WarpPadA
+      objectReference: {fileID: 0}
+    - target: {fileID: 6447083568293662406, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8634722502978257564, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
+      propertyPath: m_Size.x
+      value: 97.01886
+      objectReference: {fileID: 0}
+    - target: {fileID: 8634722502978257564, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
+      propertyPath: m_Size.y
+      value: 141.66888
+      objectReference: {fileID: 0}
+    - target: {fileID: 8634722502978257564, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.46762085
+      objectReference: {fileID: 0}
+    - target: {fileID: 8634722502978257564, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
+      propertyPath: m_Offset.y
+      value: 70.33444
       objectReference: {fileID: 0}
     - target: {fileID: 8876843774015534726, guid: fd590b75bc5a77743a3d7554f2cacd4f, type: 3}
       propertyPath: destination
@@ -1560,14 +1584,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 372705729358603705, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4906819861782895239, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
       propertyPath: m_Name
       value: WarpPadB
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906819861782895239, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7657812579521985174, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
       propertyPath: destination
       value: 
       objectReference: {fileID: 1497027820}
+    - target: {fileID: 8297064066075396495, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
+      propertyPath: m_Size.x
+      value: 95.3689
+      objectReference: {fileID: 0}
+    - target: {fileID: 8297064066075396495, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
+      propertyPath: m_Size.y
+      value: 130.0451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8297064066075396495, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.3723755
+      objectReference: {fileID: 0}
+    - target: {fileID: 8297064066075396495, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
+      propertyPath: m_Offset.y
+      value: 64.52255
+      objectReference: {fileID: 0}
     - target: {fileID: 8983815421052908227, guid: 71955c47756e6ac469ccfd931555a7a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -654.8

@@ -12,6 +12,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
 
     public EnemyState State { get; private set; } = EnemyState.Patrolling;
+    [SerializeField] private bool debugState = false;   // logs state changes
+    private EnemyState lastLogged = (EnemyState)(-1);
     public Transform Player { get; private set; }
     public Rigidbody2D Body { get; private set; }
 
@@ -48,7 +50,12 @@ public class EnemyController : MonoBehaviour
 
     void UpdateState()
     {
-        if (Player == null) { State = EnemyState.Patrolling; return; }
+        if (Player == null)
+        {
+            State = EnemyState.Patrolling;
+            if (debugState && lastLogged != State) { Debug.Log($"[{name}] State: Patrolling (no player found)"); lastLogged = State; }
+            return;
+        }
 
         float dist = Vector2.Distance(transform.position, Player.position);
 
@@ -62,6 +69,12 @@ public class EnemyController : MonoBehaviour
             case EnemyState.Chasing:
                 if (dist > loseRadius) State = EnemyState.Returning;
                 break;
+        }
+
+        if (debugState && lastLogged != State)
+        {
+            Debug.Log($"[{name}] State: {State}  (player dist={dist:0.0}, detect={detectRadius}, lose={loseRadius})");
+            lastLogged = State;
         }
     }
 

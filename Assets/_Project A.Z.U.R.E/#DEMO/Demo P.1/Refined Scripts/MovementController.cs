@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerStateManager))]
 public class MovementController : MonoBehaviour
 {
+
+
     [Header("Movement")]
     [SerializeField] float moveSpeed = 8f;
     [SerializeField] float acceleration = 60f;
@@ -191,7 +193,11 @@ public class MovementController : MonoBehaviour
         HandleJumpBuffer();
         HandleDropThrough();
         UpdateState();
+
+        if (Input.GetKeyDown(KeyCode.T)) Debug.Log($"timeScale = {Time.timeScale}");
     }
+
+      
 
     void FixedUpdate()
     {

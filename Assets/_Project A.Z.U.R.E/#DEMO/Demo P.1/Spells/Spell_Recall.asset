@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Spell_Recall
   m_EditorClassIdentifier: 
   id: Warp Step
-  displayName: Recall
+  displayName: Warp
   icon: {fileID: 1902806948, guid: e3b73c015afa2f547ac670c68bcd6199, type: 3}
   description: Warp Forward
   inputSequence: 000000000100000002000000

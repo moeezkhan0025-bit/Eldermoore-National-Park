@@ -24,6 +24,7 @@ public class CastModeUI : MonoBehaviour
     [SerializeField] private GameObject rightPrompt; // L2 arrow
 
     private IReadOnlyList<SpellDefinition> deck;
+    private SpellcasterController caster;
     private int selected;
 
     void Awake()
@@ -37,6 +38,8 @@ public class CastModeUI : MonoBehaviour
 
     public void Show(IReadOnlyList<SpellDefinition> loadout, int selectedIndex)
     {
+        if (caster == null && PlayerPersistence.Instance != null)
+            caster = PlayerPersistence.Instance.GetComponent<SpellcasterController>();
         deck = loadout;
         selected = selectedIndex;
         root.SetActive(true);
@@ -83,6 +86,14 @@ public class CastModeUI : MonoBehaviour
 
     void Update()
     {
+        // Resolve the caster lazily if it wasn't found when the panel opened.
+        if (caster == null && PlayerPersistence.Instance != null)
+            caster = PlayerPersistence.Instance.GetComponent<SpellcasterController>();
+
+        if (card == null) { /* card not wired */ return; }
+        if (caster == null) { return; }
+        card.UpdateCooldown(caster);
+
         if (messageText != null && messageText.gameObject.activeSelf && Time.unscaledTime >= messageHideAt)
             messageText.gameObject.SetActive(false);
     }

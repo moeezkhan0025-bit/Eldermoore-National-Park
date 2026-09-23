@@ -21,5 +21,6 @@ public class Bootstrapper : MonoBehaviour
         }
 #endif
         SceneManager.LoadScene(firstScene);
+        Time.timeScale = 1f;
     }
 }

@@ -66,14 +66,24 @@ public class GameManager : MonoBehaviour
         if (!string.IsNullOrEmpty(pendingSpawnId))
         {
             var player = PlayerPersistence.Instance;
-            foreach (var sp in FindObjectsOfType<SpawnPoint>())
+            var allSpawns = FindObjectsOfType<SpawnPoint>();
+            Debug.Log($"[GameManager] Scene '{scene.name}': looking for spawn id '{pendingSpawnId}'. Found {allSpawns.Length} SpawnPoints: {string.Join(", ", System.Array.ConvertAll(allSpawns, x => $"{x.Id}@{x.transform.position}"))}");
+
+            bool matched = false;
+            foreach (var sp in allSpawns)
             {
                 if (sp.Id == pendingSpawnId)
                 {
-                    if (player != null) PlacePlayer(player.gameObject, sp.transform.position);
+                    matched = true;
+                    if (player != null)
+                    {
+                        PlacePlayer(player.gameObject, sp.transform.position);
+                        Debug.Log($"[GameManager] Placed player at spawn '{sp.Id}' pos={sp.transform.position}. Player now at {player.transform.position}");
+                    }
                     break;
                 }
             }
+            if (!matched) Debug.LogWarning($"[GameManager] NO SpawnPoint matched id '{pendingSpawnId}' in '{scene.name}' — player stays where it was (may fall).");
             pendingSpawnId = null;
         }
 
@@ -130,8 +140,10 @@ public class GameManager : MonoBehaviour
 
     public void EnterRangerHQ()
     {
-        LoadSceneWithSpawn(rangerHQScene, "HQ_Entry");
+        Debug.Log($"Loading Ranger HQ scene: '{rangerHQScene}'");
+        SceneManager.LoadScene(rangerHQScene);
     }
+
     public void EnterGameplay() => SceneManager.LoadScene(gameplayScene);
 
     // ---------- CONTINUE / LOAD ----------

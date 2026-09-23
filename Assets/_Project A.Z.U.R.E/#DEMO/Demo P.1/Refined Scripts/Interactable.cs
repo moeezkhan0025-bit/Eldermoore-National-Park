@@ -1,19 +1,16 @@
 using UnityEngine;
 
-// Base for anything Triangle can interact with. Subclass it (WarpPad, Doorway,
-// item, NPC) and override Interact(). Needs a trigger Collider2D (interaction range);
-// PlayerInteractor detects it and calls Interact() when Triangle is pressed.
-//
-// (Prompt hooks intentionally left out for now — add the floating "Triangle" hint
-//  back once the interaction logic is proven. Keeps this decoupled from WorldPrompt.)
+// Base for anything Triangle can interact with. Subclass it (Doorway, WarpPad,
+// TeleportPoint, NPC) and override Interact(). Shows an InteractPrompt when the
+// player's near, and grays it when pressed.
 [RequireComponent(typeof(Collider2D))]
 public class Interactable : MonoBehaviour
 {
-    [SerializeField] protected string promptText = "Interact";
+    [SerializeField] protected InteractPrompt prompt;   // the floating Triangle prompt (optional)
 
-    // Optional overrides for showing/hiding a prompt later. No-ops for now.
-    public virtual void ShowPrompt() { }
-    public virtual void HidePrompt() { }
+    public virtual void ShowPrompt() { if (prompt != null) prompt.Show(); }
+    public virtual void HidePrompt() { if (prompt != null) prompt.Hide(); }
+    public virtual void FlashPrompt() { if (prompt != null) prompt.FlashPressed(); }
 
     // Override with what the object does. Base is a harmless no-op.
     public virtual void Interact(GameObject player) { }

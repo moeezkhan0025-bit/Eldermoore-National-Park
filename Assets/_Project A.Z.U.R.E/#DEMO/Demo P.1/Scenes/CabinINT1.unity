@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb0593a0977a5aa4c9d6b9a580b51ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Interact
+  prompt: {fileID: 0}
   destination: {fileID: 2050143979}
   exitPoint: {fileID: 1598475425}
 --- !u!61 &47653537
@@ -658,7 +658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf88a39c5f5a78d47a0a0ae6fc82b333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Interact
+  prompt: {fileID: 0}
   targetScene: Game
   spawnPointId: FromCabin1
 --- !u!61 &296433876
@@ -796,7 +796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf88a39c5f5a78d47a0a0ae6fc82b333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Interact
+  prompt: {fileID: 0}
   targetScene: CabinINT2
   spawnPointId: FromCabin1
 --- !u!61 &543245899
@@ -889,7 +889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf88a39c5f5a78d47a0a0ae6fc82b333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Interact
+  prompt: {fileID: 0}
   targetScene: CabinINT2
   spawnPointId: FromCabin1Back
 --- !u!61 &679499254
@@ -1261,7 +1261,7 @@ Transform:
   m_GameObject: {fileID: 1147495668}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -137.5, z: 0}
+  m_LocalPosition: {x: -0, y: -139.96, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1279,7 +1279,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f932f500a01e274c954be87b6b0530e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: FromGame
+  id: FromExterior
 --- !u!1 &1216321503
 GameObject:
   m_ObjectHideFlags: 0
@@ -1586,7 +1586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb0593a0977a5aa4c9d6b9a580b51ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Interact
+  prompt: {fileID: 0}
   destination: {fileID: 47653536}
   exitPoint: {fileID: 1216321504}
 --- !u!61 &2050143980
