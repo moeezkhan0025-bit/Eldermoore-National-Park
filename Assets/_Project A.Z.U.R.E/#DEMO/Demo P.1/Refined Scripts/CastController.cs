@@ -44,6 +44,7 @@ public class CastController : MonoBehaviour
 
     void OnEnable()
     {
+        if (controls == null) controls = new GameController();   // in case OnEnable runs before Awake
         controls.Player.Enable();     // EnterCast lives here
         // Cast map is enabled only while casting.
         controls.Player.EnterCast.performed += OnEnterCast;

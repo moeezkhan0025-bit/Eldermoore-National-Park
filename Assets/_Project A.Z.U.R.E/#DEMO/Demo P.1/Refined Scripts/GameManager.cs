@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public bool InGameplay { get; private set; }
     public SaveData CurrentSave { get; private set; }
     public int CurrentSlot { get; private set; } = -1;
 
@@ -49,8 +50,10 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         bool gameplay = IsGameplayScene(scene.name);
+        Debug.Log($"[GM-scene] loaded '{scene.name}' (mode={mode}) -> gameplay={gameplay} | excludes: menu='{mainMenuScene}' charSel='{characterSelectScene}' intro='{introCutsceneScene}'");
 
         // Gameplay scenes need a player. Spawn one if it doesn't already exist.
+        InGameplay = gameplay;
         if (gameplay) EnsurePlayer();
 
         // A) Loading from a save: drop the player at the saved position.
@@ -85,6 +88,28 @@ public class GameManager : MonoBehaviour
             }
             if (!matched) Debug.LogWarning($"[GameManager] NO SpawnPoint matched id '{pendingSpawnId}' in '{scene.name}' — player stays where it was (may fall).");
             pendingSpawnId = null;
+        }
+        else if (gameplay)
+        {
+            // C) No save restore and no doorway id (e.g. bootstrap -> first scene):
+            // place the player at a default SpawnPoint so it doesn't keep its old
+            // position and fall. Prefer one with id "Default"/"Start", else the first.
+            var player = PlayerPersistence.Instance;
+            var allSpawns = FindObjectsOfType<SpawnPoint>();
+            if (player != null && allSpawns.Length > 0)
+            {
+                SpawnPoint chosen = null;
+                foreach (var sp in allSpawns)
+                    if (sp.Id == "Default" || sp.Id == "Start") { chosen = sp; break; }
+                if (chosen == null) chosen = allSpawns[0];   // fall back to any spawn point
+
+                PlacePlayer(player.gameObject, chosen.transform.position);
+                Debug.Log($"[GameManager] No spawn id — placed player at default SpawnPoint '{chosen.Id}' pos={chosen.transform.position}.");
+            }
+            else if (player != null)
+            {
+                Debug.LogWarning($"[GameManager] '{scene.name}' has NO SpawnPoints — player may fall. Add a SpawnPoint on solid ground.");
+            }
         }
 
         // C) Autosave on arriving in a real gameplay scene.
